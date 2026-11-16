@@ -6,7 +6,7 @@
 
 **The free starter kit for the _Lumina from Scratch_ course: build a complete Next.js 16 publishing platform, from an empty folder to a live site.**
 
-[![Watch the course](https://img.shields.io/badge/Watch_the_course-YouTube-FF0033?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@reactjsbd)
+[![Watch the course](https://img.shields.io/badge/Watch_the_course-YouTube-FF0033?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/W6vl0Il5c0I)
 [![Get the full source code](https://img.shields.io/badge/Full_source_code-Buy_Me_a_Coffee-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/reactbd/e/597995)
 [![Live demo](https://img.shields.io/badge/Live_demo-lumina.noksha.dev-C06B3D?style=for-the-badge)](https://lumina.noksha.dev)
 
@@ -167,33 +167,34 @@ account's password is **`lumina123`**.
 ## The course, part by part
 
 Each part teaches one idea, in the order you'd build it, and ends with a checkpoint where you run the app.
+Click a time to jump straight to that part of the video.
 
 | | Part | Starts at |
 | ---: | --- | --- |
-| 1 | An empty folder | 0:07:38 |
-| 2 | The design system | 0:18:24 |
-| 3 | The database | 0:53:24 |
-| 4 | The core logic | 1:11:48 |
-| 5 | Seed data and every role | 1:31:43 |
-| 6 | Reading data with the cache | 1:45:56 |
-| 7 | Accounts and roles | 2:04:56 |
-| 8 | The site shell | 2:41:44 |
-| 9 | The home page | 3:08:12 |
-| 10 | The story page | 3:34:38 |
-| 11 | Saving, following, quizzes and comments | 3:57:34 |
-| 12 | Browsing: sections, tags and writers | 4:21:51 |
-| 13 | Search that forgives typos | 4:34:34 |
-| 14 | The reader desk | 4:58:11 |
-| 15 | The writer desk | 5:25:45 |
-| 16 | Uploads and media libraries | 5:42:30 |
-| 17 | The story editor | 6:09:28 |
-| 18 | Ask Lumina | 6:33:04 |
-| 19 | Email, the newsletter and static pages | 6:59:14 |
-| 20 | The admin desk | 7:32:46 |
-| 21 | SEO and feeds | 8:02:04 |
-| 22 | Testing it | 8:14:49 |
-| 23 | Every key, and where to get it | 8:31:14 |
-| 24 | Going live | 8:45:45 |
+| 1 | An empty folder | [0:07:38](https://youtu.be/W6vl0Il5c0I?t=458) |
+| 2 | The design system | [0:18:24](https://youtu.be/W6vl0Il5c0I?t=1104) |
+| 3 | The database | [0:53:24](https://youtu.be/W6vl0Il5c0I?t=3204) |
+| 4 | The core logic | [1:11:48](https://youtu.be/W6vl0Il5c0I?t=4308) |
+| 5 | Seed data and every role | [1:31:43](https://youtu.be/W6vl0Il5c0I?t=5503) |
+| 6 | Reading data with the cache | [1:45:56](https://youtu.be/W6vl0Il5c0I?t=6356) |
+| 7 | Accounts and roles | [2:04:56](https://youtu.be/W6vl0Il5c0I?t=7496) |
+| 8 | The site shell | [2:41:44](https://youtu.be/W6vl0Il5c0I?t=9704) |
+| 9 | The home page | [3:08:12](https://youtu.be/W6vl0Il5c0I?t=11292) |
+| 10 | The story page | [3:34:38](https://youtu.be/W6vl0Il5c0I?t=12878) |
+| 11 | Saving, following, quizzes and comments | [3:57:34](https://youtu.be/W6vl0Il5c0I?t=14254) |
+| 12 | Browsing: sections, tags and writers | [4:21:51](https://youtu.be/W6vl0Il5c0I?t=15711) |
+| 13 | Search that forgives typos | [4:34:34](https://youtu.be/W6vl0Il5c0I?t=16474) |
+| 14 | The reader desk | [4:58:11](https://youtu.be/W6vl0Il5c0I?t=17891) |
+| 15 | The writer desk | [5:25:45](https://youtu.be/W6vl0Il5c0I?t=19545) |
+| 16 | Uploads and media libraries | [5:42:30](https://youtu.be/W6vl0Il5c0I?t=20550) |
+| 17 | The story editor | [6:09:28](https://youtu.be/W6vl0Il5c0I?t=22168) |
+| 18 | Ask Lumina | [6:33:04](https://youtu.be/W6vl0Il5c0I?t=23584) |
+| 19 | Email, the newsletter and static pages | [6:59:14](https://youtu.be/W6vl0Il5c0I?t=25154) |
+| 20 | The admin desk | [7:32:46](https://youtu.be/W6vl0Il5c0I?t=27166) |
+| 21 | SEO and feeds | [8:02:04](https://youtu.be/W6vl0Il5c0I?t=28924) |
+| 22 | Testing it | [8:14:49](https://youtu.be/W6vl0Il5c0I?t=29689) |
+| 23 | Every key, and where to get it | [8:31:14](https://youtu.be/W6vl0Il5c0I?t=30674) |
+| 24 | Going live | [8:45:45](https://youtu.be/W6vl0Il5c0I?t=31545) |
 
 ## What you'll build
 
@@ -246,7 +247,8 @@ it beside you to check your work, the complete source code is on Buy Me a Coffee
 
 | | |
 | --- | --- |
-| ▶️ The course | [YouTube · ReactBD](https://www.youtube.com/@reactjsbd) |
+| ▶️ The course | [Lumina from Scratch, the full course on YouTube](https://youtu.be/W6vl0Il5c0I) |
+| 📺 Channel | [YouTube · ReactBD](https://www.youtube.com/@reactjsbd) |
 | 💛 Full source code | [buymeacoffee.com/reactbd/e/597995](https://buymeacoffee.com/reactbd/e/597995) |
 | 🌐 Live demo | [lumina.noksha.dev](https://lumina.noksha.dev) |
 | ✍️ Articles | [medium.com/@reactbd](https://medium.com/@reactbd) |
