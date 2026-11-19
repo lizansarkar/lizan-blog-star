@@ -1,0 +1,273 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  WRITER
+  USER
+}
+
+enum ArticleStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+}
+
+enum ReactionKind {
+  LIKE
+  DISLIKE
+}
+
+enum FollowKind {
+  CATEGORY
+  AUTHOR
+}
+
+model User {
+  id                  String               @id @default(cuid())
+  name                String
+  slug                String?              @unique
+  email               String               @unique
+  passwordHash        String
+  role                Role                 @default(USER)
+  bio                 String?
+  location            String?
+  website             String?
+  avatar              String?
+  banned              Boolean              @default(false)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  articles            Article[]
+  comments            Comment[]
+  commentLikes        CommentLike[]
+  articleReactions    ArticleReaction[]
+  bookmarks           Bookmark[]
+  readingHistory      ReadingHistory[]
+  quizAttempts        QuizAttempt[]
+  follows             Follow[]
+  notifications       Notification[]
+  subscribers         Subscriber[]
+  passwordResetTokens PasswordResetToken[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+
+  articles    Article[]
+
+  @@index([slug])
+}
+
+model Tag {
+  id        String       @id @default(cuid())
+  name      String
+  slug      String       @unique
+  createdAt DateTime     @default(now())
+
+  articles  ArticleTag[]
+
+  @@index([slug])
+}
+
+model Article {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  excerpt     String
+  content     Json
+  coverImage  String?
+  status      ArticleStatus @default(DRAFT)
+  publishedAt DateTime?
+  scheduledAt DateTime?
+  viewCount   Int           @default(0)
+  videoUrl    String?
+  audioUrl    String?
+  keyPoints   Json?
+
+  authorId    String
+  author      User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    Category      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  tags        ArticleTag[]
+  quizzes     Quiz[]
+  comments    Comment[]
+  bookmarks   Bookmark[]
+  readingHistory ReadingHistory[]
+  reactions   ArticleReaction[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([publishedAt])
+  @@index([authorId])
+  @@index([categoryId])
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+}
+
+model Quiz {
+  id        String        @id @default(cuid())
+  articleId String        @unique
+  article   Article       @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  title     String
+  questions Json
+  createdAt DateTime      @default(now())
+
+  attempts  QuizAttempt[]
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId    String
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  score     Int
+  total     Int
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([quizId])
+}
+
+model Comment {
+  id        String        @id @default(cuid())
+  articleId String
+  article   Article       @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    Comment?      @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[]     @relation("CommentReplies")
+  body      String
+  hidden    Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  likes     CommentLike[]
+
+  @@index([articleId])
+  @@index([userId])
+}
+
+model CommentLike {
+  userId    String
+  commentId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, commentId])
+}
+
+model ArticleReaction {
+  userId    String
+  articleId String
+  kind      ReactionKind
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article   Article      @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+
+  @@id([userId, articleId])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  articleId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, articleId])
+}
+
+model ReadingHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  articleId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  readAt    DateTime @default(now())
+
+  @@unique([userId, articleId])
+}
+
+model Follow {
+  id        String     @id @default(cuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      FollowKind
+  targetId  String
+  createdAt DateTime   @default(now())
+
+  @@unique([userId, kind, targetId])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  href      String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model Subscriber {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  userId         String?
+  user           User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  source         String    @default("footer")
+  unsubscribedAt DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([email])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([tokenHash])
+}
+
+model SiteSetting {
+  id          Int      @id @default(1)
+  siteName    String   @default("Lizan Blog Star")
+  tagline     String   @default("A calmer publication for technology, engineering, and digital craft.")
+  description String   @default("Lizan Blog Star is an editorial publication for people who build software, shape digital products, and care deeply about how engineering work reads.")
+  updatedAt   DateTime @updatedAt
+}

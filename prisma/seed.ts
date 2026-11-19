@@ -368,7 +368,7 @@ async function main() {
   const passwordHash = await bcrypt.hash("lumina123", 10);
   const person = (data: Omit<Prisma.UserCreateInput, "passwordHash">) => prisma.user.create({ data: { ...data, passwordHash } });
   const [admin, writer, mira, theo, reader, priya, leo, banned] = await Promise.all([
-    person({ name: "Ada Quinn", slug: "ada-quinn", email: "admin@lumina.dev", role: "ADMIN", bio: "Edits Lumina and keeps the doors locked.", location: "Lisbon" }),
+    person({ name: "Lizan Sarkar", slug: "lizan-sarkar", email: "admin@lizan.dev", role: "ADMIN", bio: "Founder & Lead Editor of Lizan Blog Star. Crafting calm, resilient software.", location: "Dhaka", website: "https://github.com/lizansarkar" }),
     person({ name: "Jules Berger", slug: "jules-berger", email: "writer@lumina.dev", role: "WRITER", bio: "Writes about software that respects the person using it.", location: "Berlin", website: "https://example.com/jules" }),
     person({ name: "Mira Okafor", slug: "mira-okafor", email: "mira@lumina.dev", role: "WRITER", bio: "Covers product decisions and the costs behind them.", location: "Lagos" }),
     person({ name: "Theo Lindqvist", slug: "theo-lindqvist", email: "theo@lumina.dev", role: "WRITER", bio: "Designer. Writes about type, space, and calm interfaces.", location: "Stockholm" }),
@@ -448,7 +448,11 @@ async function main() {
     articleIds.set(slug, article.id);
     if (story.quiz) {
       const quiz = await prisma.quiz.create({
-        data: { articleId: article.id, title: story.quiz.title, questions: story.quiz.questions },
+        data: {
+          articleId: article.id,
+          title: story.quiz.title,
+          questions: story.quiz.questions as unknown as Prisma.InputJsonValue,
+        },
       });
       firstQuizId ||= quiz.id;
     }
@@ -537,16 +541,16 @@ async function main() {
   await prisma.siteSetting.create({
     data: {
       id: 1,
-      siteName: "Lumina",
+      siteName: "Lizan Blog Star",
       tagline: "A calmer place for technology.",
       description:
-        "Lumina is a modern publication for people who build software, shape products, and care how the work reads.",
+        "Lizan Blog Star is a modern publication for people who build software, shape products, and care how the work reads.",
     },
   });
 
-  console.log("Seeded Lumina: 14 stories, 4 sections, 8 accounts");
+  console.log("Seeded Lizan Blog Star: 14 stories, 4 sections, 8 accounts");
   console.table([
-    { role: "ADMIN", email: "admin@lumina.dev", name: "Ada Quinn" },
+    { role: "ADMIN", email: "admin@lizan.dev", name: "Lizan Sarkar" },
     { role: "WRITER", email: "writer@lumina.dev", name: "Jules Berger" },
     { role: "WRITER", email: "mira@lumina.dev", name: "Mira Okafor" },
     { role: "WRITER", email: "theo@lumina.dev", name: "Theo Lindqvist" },
