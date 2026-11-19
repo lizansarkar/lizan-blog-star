@@ -1,194 +1,199 @@
 import Link from "next/link";
 import Image from "next/image";
-import { format } from "date-fns";
-import { Sparkles, ArrowRight, BookOpen, Clock, Tag, Flame } from "lucide-react";
-import { getFeaturedArticle, getPublishedArticles } from "@/lib/articles";
-import { ArchiveField } from "@/components/archive-field";
+import { Sparkles, ArrowRight, BookOpen, Clock } from "lucide-react";
+import { getPublishedArticles } from "@/lib/articles";
+import { HomeHero, type FeaturedItem } from "@/components/home-hero";
+import { TrendingTicker } from "@/components/trending-ticker";
+import { stories as seedStories } from "../../../prisma/seed";
 
 export default async function HomePage() {
-  const [featured, articles] = await Promise.all([
-    getFeaturedArticle(),
-    getPublishedArticles(),
-  ]);
+  const articles = await getPublishedArticles();
 
-  const recentArticles = articles.filter((a) => a.id !== featured.id);
+  // Prepare featured carousel items
+  const featuredList: FeaturedItem[] = seedStories.slice(0, 4).map((story, idx) => ({
+    id: `featured-${idx}`,
+    title: story.title,
+    italicWord: idx === 0 ? "quiet" : idx === 1 ? "rewrote" : idx === 2 ? "calmer" : "boring",
+    slug: story.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+    category: story.category,
+    excerpt: story.excerpt,
+    coverImage: story.cover,
+    authorName: idx === 0 ? "Lizan Sarkar" : "Jules Berger",
+    authorInitials: idx === 0 ? "LS" : "JB",
+    publishedAt: new Date(Date.now() - story.daysAgo * 86400000),
+  }));
+
+  // Prepare trending ticker items
+  const tickerItems = seedStories.slice(1, 6).map((story, idx) => ({
+    id: `ticker-${idx}`,
+    category: story.category,
+    title: story.title,
+    slug: story.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+  }));
+
+  // Recommended reads (top 4 stories from image)
+  const recommended = seedStories.slice(0, 4).map((story, idx) => ({
+    id: `rec-${idx}`,
+    title: story.title,
+    slug: story.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+    category: story.category,
+    authorName: idx === 0 ? "Lizan Sarkar" : idx === 1 ? "Mira Okafor" : idx === 2 ? "Theo Lindqvist" : "Jules Berger",
+    cover: story.cover,
+  }));
+
+  // Remaining dispatches
+  const moreStories = articles.slice(4);
 
   return (
-    <div className="relative overflow-hidden pb-16">
-      {/* Editorial Issue Header */}
-      <section className="border-b border-border/70 bg-card/20 py-8 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary uppercase tracking-widest">
-              Issue #01 · The Inaugural Edition
-            </div>
-            <h1 className="mt-3 font-sans text-4xl font-extrabold tracking-tight sm:text-6xl text-foreground">
-              Lizan Blog Star
-            </h1>
-            <p className="mt-2 text-base sm:text-lg text-muted-foreground max-w-2xl">
-              A calm publication for people who build software, shape digital products, and care how the work reads.
-            </p>
-          </div>
-          <div className="text-xs text-muted-foreground font-mono">
-            {format(new Date(), "MMMM yyyy")} · Edited by Lizan Sarkar
-          </div>
-        </div>
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 space-y-10">
+      {/* 1. Featured Story Hero Carousel (Matches home.jpg) */}
+      <section>
+        <HomeHero items={featuredList} />
       </section>
 
-      {/* Featured Lead Story */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="group relative overflow-hidden rounded-3xl border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
-            {/* Story Text */}
-            <div className="lg:col-span-7 flex flex-col justify-between p-6 sm:p-10">
-              <div>
-                <div className="flex items-center gap-2.5 text-xs">
-                  <span className="rounded-full bg-primary/10 px-2.5 py-1 font-semibold text-primary">
-                    {featured.category}
-                  </span>
-                  <span className="text-muted-foreground">·</span>
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {featured.readingTime} min read
-                  </span>
-                </div>
-
-                <h2 className="mt-4 font-sans text-2xl sm:text-4xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                  <Link href={`/article/${featured.slug}`}>
-                    {featured.title}
-                  </Link>
-                </h2>
-
-                <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
-                  {featured.excerpt}
-                </p>
-              </div>
-
-              <div className="mt-8 flex items-center justify-between border-t border-border/50 pt-4">
-                <div className="text-xs text-muted-foreground">
-                  By <span className="font-semibold text-foreground">{featured.authorName}</span> · {format(featured.publishedAt, "MMM d, yyyy")}
-                </div>
-                <Link
-                  href={`/article/${featured.slug}`}
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary group-hover:translate-x-1 transition-transform"
-                >
-                  <span>Read story</span>
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Story Cover Image */}
-            <div className="lg:col-span-5 relative min-h-[260px] lg:min-h-full bg-muted overflow-hidden">
-              {featured.coverImage ? (
-                <Image
-                  src={featured.coverImage}
-                  alt={featured.title}
-                  fill
-                  priority
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 1024px) 100vw, 40vw"
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center bg-muted/60 text-muted-foreground">
-                  <BookOpen className="h-12 w-12" />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+      {/* 2. Trending Ticker Bar (Matches home.jpg) */}
+      <section>
+        <TrendingTicker items={tickerItems} />
       </section>
 
-      {/* Ask Lizan Ambient Feature Banner */}
-      <section className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/10 via-card to-background p-8 sm:p-10 shadow-sm">
-          <ArchiveField />
-          <div className="relative z-10 max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold text-primary">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Ask Lizan · AI Assistant</span>
-            </div>
-            <h2 className="mt-4 font-sans text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-              Explore the entire archive with Gemini
-            </h2>
-            <p className="mt-2 text-sm sm:text-base text-muted-foreground leading-relaxed">
-              Ask anything about our published essays, architecture decisions, or engineering practices. Lizan&apos;s assistant searches the publication and answers with citations.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/ask"
-                className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground hover:opacity-95 transition-opacity"
-              >
-                <span>Launch Assistant</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/articles"
-                className="inline-flex h-10 items-center rounded-full border border-border bg-card px-5 text-sm font-medium text-foreground hover:bg-muted/50 transition-colors"
-              >
-                Browse All Stories
-              </Link>
-            </div>
+      {/* 3. Recommended Reads Section (Matches home.jpg) */}
+      <section className="space-y-6 pt-4">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-border/70 pb-4">
+          <h2 className="font-sans text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+            Recommended reads
+          </h2>
+          <div className="text-xs text-muted-foreground">
+            Popular with readers right now ·{" "}
+            <Link href="/login" className="text-primary hover:underline font-semibold">
+              Sign in for picks based on your reading
+            </Link>
           </div>
         </div>
-      </section>
 
-      {/* Recent Stories Grid */}
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between border-b border-border pb-4">
-          <div className="flex items-center gap-2">
-            <Flame className="h-5 w-5 text-primary" />
-            <h3 className="font-sans text-2xl font-bold tracking-tight text-foreground">
-              Recent Dispatches
-            </h3>
-          </div>
-          <span className="text-xs text-muted-foreground font-medium">
-            {recentArticles.length} stories available
-          </span>
-        </div>
-
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {recentArticles.map((article) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {recommended.map((story) => (
             <article
-              key={article.id}
-              className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-5 transition-all hover:border-primary/40 hover:shadow-md"
+              key={story.id}
+              className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-card p-4 transition-all hover:border-primary/40 hover:shadow-md"
             >
               <div>
-                {/* Story Cover */}
-                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-muted">
-                  {article.coverImage ? (
-                    <Image
-                      src={article.coverImage}
-                      alt={article.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground">
-                      <BookOpen className="h-8 w-8" />
-                    </div>
-                  )}
-                  <span className="absolute top-3 left-3 rounded-full bg-background/80 backdrop-blur-sm px-2.5 py-0.5 text-[10px] font-semibold text-foreground uppercase tracking-wider">
-                    {article.category}
-                  </span>
+                {/* Cover Image */}
+                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-neutral-900">
+                  <Image
+                    src={story.cover}
+                    alt={story.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  />
                 </div>
 
-                {/* Content */}
-                <h4 className="mt-4 font-sans text-lg font-bold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                  <Link href={`/article/${article.slug}`}>
-                    {article.title}
+                <div className="mt-3.5">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                    Popular with readers
+                  </span>
+                  <h3 className="mt-1 font-sans text-sm font-bold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                    <Link href={`/article/${story.slug}`}>
+                      {story.title}
+                    </Link>
+                  </h3>
+                </div>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-border/50 text-[11px] text-muted-foreground flex items-center justify-between">
+                <span>{story.authorName}</span>
+                <span className="font-semibold text-foreground">{story.category}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. Ask Lizan Band (Matches home.jpg "Ask the archive anything.") */}
+      <section className="rounded-3xl border border-amber-900/30 bg-gradient-to-r from-neutral-950 via-neutral-900 to-amber-950/40 p-8 sm:p-12 text-white shadow-xl relative overflow-hidden">
+        {/* Subtle warm glow background */}
+        <div className="absolute top-0 right-1/4 w-[400px] h-[300px] bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+          <div className="max-w-2xl space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 border border-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-400">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Ask Lizan · Powered by Gemini</span>
+            </div>
+
+            <h2 className="font-sans text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+              Ask the archive{" "}
+              <span className="font-serif italic font-normal text-amber-400">
+                anything.
+              </span>
+            </h2>
+
+            <p className="text-sm sm:text-base text-neutral-300 max-w-xl leading-relaxed">
+              The assistant has read all 14 stories on Lizan Blog Star. Ask a question and get real stories back as links.
+            </p>
+          </div>
+
+          {/* Interactive prompt pills */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <Link
+              href="/ask?q=Where+should+I+start+if+I+like+AI"
+              className="inline-flex items-center justify-between gap-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-3 text-xs font-semibold text-white backdrop-blur-md transition-all hover:scale-105"
+            >
+              <span>Where should I start if I like AI?</span>
+              <ArrowRight className="h-3.5 w-3.5 text-amber-400" />
+            </Link>
+
+            <Link
+              href="/ask"
+              className="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-xs font-bold text-black hover:bg-neutral-100 shadow-md transition-all hover:scale-105"
+            >
+              Launch Chat
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. More Dispatches Grid */}
+      <section className="space-y-6 pt-4 pb-12">
+        <div className="flex items-center justify-between border-b border-border/70 pb-4">
+          <h2 className="font-sans text-2xl font-bold tracking-tight text-foreground">
+            From the Sections
+          </h2>
+          <Link href="/articles" className="text-xs font-semibold text-primary hover:underline">
+            View all 14 dispatches →
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {moreStories.slice(0, 6).map((story) => (
+            <article
+              key={story.id}
+              className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-card p-5 transition-all hover:border-primary/40 hover:shadow-md"
+            >
+              <div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+                  <span className="font-semibold text-primary uppercase text-[10px] tracking-wider">
+                    {story.category}
+                  </span>
+                  <span>{story.readingTime} min read</span>
+                </div>
+
+                <h3 className="font-sans text-base font-bold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                  <Link href={`/article/${story.slug}`}>
+                    {story.title}
                   </Link>
-                </h4>
-                <p className="mt-2 text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-                  {article.excerpt}
+                </h3>
+
+                <p className="mt-2 text-xs text-muted-foreground line-clamp-3 leading-relaxed">
+                  {story.excerpt}
                 </p>
               </div>
 
-              {/* Meta */}
-              <div className="mt-6 flex items-center justify-between border-t border-border/50 pt-3 text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">{article.authorName}</span>
-                <span>{article.readingTime} min read</span>
+              <div className="mt-5 pt-3 border-t border-border/50 text-[11px] text-muted-foreground flex items-center justify-between">
+                <span>{story.authorName}</span>
+                <span className="text-primary font-semibold group-hover:translate-x-0.5 transition-transform">
+                  Read →
+                </span>
               </div>
             </article>
           ))}
