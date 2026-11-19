@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Sparkles,
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 
 export default function StoryEditorPage() {
+  const router = useRouter();
   const [title, setTitle] = useState("The case for boring deployment pipelines");
   const [dek, setDek] = useState("The most expensive pipeline is the one only one person can explain on a Friday.");
   const [status, setStatus] = useState<"Published" | "Scheduled" | "Draft">("Published");
@@ -43,9 +45,39 @@ export default function StoryEditorPage() {
     }, 700);
   };
 
-  const handlePublish = () => {
-    setPublished(true);
-    setTimeout(() => setPublished(false), 3000);
+  const [loading, setLoading] = useState(false);
+
+  const handlePublish = async () => {
+    if (!title.trim() || loading) return;
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/articles/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          dek,
+          content,
+          category,
+          tags,
+          status: "PUBLISHED",
+        }),
+      });
+
+      if (res.ok) {
+        setPublished(true);
+        setTimeout(() => {
+          setPublished(false);
+          router.push(`/article/${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`);
+        }, 1200);
+      }
+    } catch (err) {
+      console.error(err);
+      setPublished(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

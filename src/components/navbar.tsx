@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowUpRight, Menu, X, Search, Sparkles } from "lucide-react";
+import { ArrowUpRight, Menu, X, Sparkles } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
+import { SearchDialog } from "./search-dialog";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -42,6 +43,7 @@ export function Navbar() {
 
         {/* Right Action Bar */}
         <div className="hidden md:flex items-center gap-4">
+          <SearchDialog />
           <ThemeToggle />
 
           <div className="h-4 w-px bg-border/60" />
@@ -97,7 +99,10 @@ export function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="border-b border-border bg-background px-4 py-5 md:hidden">
+        <div className="border-b border-border bg-background px-4 py-5 md:hidden space-y-4">
+          <div className="pb-2">
+            <SearchDialog />
+          </div>
           <nav className="flex flex-col gap-3.5 text-sm font-medium">
             <Link
               href="/"

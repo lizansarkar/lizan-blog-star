@@ -9,11 +9,27 @@ export interface ArticlePreview {
   category: string;
   coverImage?: string | null;
   publishedAt: Date;
+  updatedAt?: Date;
   authorName: string;
   authorAvatar?: string | null;
   readingTime: number;
   tags: string[];
 }
+
+export const seedArticles: ArticlePreview[] = seedStories.map((story, i) => ({
+  id: `seed-${i + 1}`,
+  title: story.title,
+  slug: story.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+  excerpt: story.excerpt,
+  category: story.category,
+  coverImage: story.cover,
+  publishedAt: new Date(Date.now() - story.daysAgo * 86400000),
+  updatedAt: new Date(Date.now() - story.daysAgo * 86400000),
+  authorName: i === 0 ? "Lizan Sarkar" : "Jules Berger",
+  authorAvatar: null,
+  readingTime: 3 + (i % 4),
+  tags: story.tags,
+}));
 
 export async function getFeaturedArticle(): Promise<ArticlePreview> {
   try {
@@ -36,6 +52,7 @@ export async function getFeaturedArticle(): Promise<ArticlePreview> {
         category: article.category.name,
         coverImage: article.coverImage,
         publishedAt: article.publishedAt || article.createdAt,
+        updatedAt: article.updatedAt,
         authorName: article.author.name,
         authorAvatar: article.author.avatar,
         readingTime: 4,
@@ -46,21 +63,7 @@ export async function getFeaturedArticle(): Promise<ArticlePreview> {
     // Database fallback
   }
 
-  // Fallback to first seed story
-  const first = seedStories[0];
-  return {
-    id: "seed-1",
-    title: first.title,
-    slug: first.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-    excerpt: first.excerpt,
-    category: first.category,
-    coverImage: first.cover,
-    publishedAt: new Date(Date.now() - first.daysAgo * 86400000),
-    authorName: "Lizan Sarkar",
-    authorAvatar: null,
-    readingTime: 4,
-    tags: first.tags,
-  };
+  return seedArticles[0];
 }
 
 export async function getPublishedArticles(): Promise<ArticlePreview[]> {
@@ -84,6 +87,7 @@ export async function getPublishedArticles(): Promise<ArticlePreview[]> {
         category: article.category.name,
         coverImage: article.coverImage,
         publishedAt: article.publishedAt || article.createdAt,
+        updatedAt: article.updatedAt,
         authorName: article.author.name,
         authorAvatar: article.author.avatar,
         readingTime: 4,
@@ -94,18 +98,5 @@ export async function getPublishedArticles(): Promise<ArticlePreview[]> {
     // Database fallback
   }
 
-  // Fallback to seed stories
-  return seedStories.map((story, i) => ({
-    id: `seed-${i + 1}`,
-    title: story.title,
-    slug: story.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-    excerpt: story.excerpt,
-    category: story.category,
-    coverImage: story.cover,
-    publishedAt: new Date(Date.now() - story.daysAgo * 86400000),
-    authorName: i === 0 ? "Lizan Sarkar" : "Jules Berger",
-    authorAvatar: null,
-    readingTime: 3 + (i % 4),
-    tags: story.tags,
-  }));
+  return seedArticles;
 }

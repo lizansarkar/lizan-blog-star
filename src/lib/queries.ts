@@ -1,3 +1,5 @@
+import { getPublishedArticles, ArticlePreview, seedArticles } from "@/lib/articles";
+
 export interface SiteSettingData {
   id: number;
   siteName: string;
@@ -6,7 +8,6 @@ export interface SiteSettingData {
 }
 
 export async function getSettings(): Promise<SiteSettingData> {
-  // If database is available, fetch from database; otherwise return default publication settings
   try {
     const { prisma } = await import("@/lib/prisma");
     const settings = await prisma.siteSetting.findFirst();
@@ -25,3 +26,6 @@ export async function getSettings(): Promise<SiteSettingData> {
       "Lizan Blog Star is an editorial publication for people who build software, shape digital products, and care deeply about how engineering work reads.",
   };
 }
+
+export { getPublishedArticles, seedArticles };
+export type { ArticlePreview };

@@ -7,6 +7,8 @@ import { getPublishedArticles } from "@/lib/articles";
 import { extractHeadings, calculateReadingTime } from "@/lib/logic";
 import { pageMetadata } from "@/lib/seo";
 import { ArticleInteractions } from "@/components/article-interactions";
+import { StoryQuiz } from "@/components/story-quiz";
+import { StoryDiscussion } from "@/components/story-discussion";
 import { stories as seedStories } from "../../../../../prisma/seed";
 
 interface PageProps {
@@ -262,75 +264,20 @@ export default async function ArticlePage({ params }: PageProps) {
             })}
           </div>
 
-          {/* Quiz Section */}
+          {/* Quiz Section - Server Scored */}
           {seedMatch?.quiz && (
-            <div className="mt-12 rounded-3xl border border-border bg-card p-6 sm:p-8">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
-                <HelpCircle className="h-4 w-4" />
-                <span>Test Your Understanding</span>
-              </div>
-              <h3 className="mt-2 text-xl font-bold text-foreground">
-                {seedMatch.quiz.title}
-              </h3>
-
-              <div className="mt-6 space-y-6">
-                {seedMatch.quiz.questions.map((q, qIndex) => (
-                  <div key={qIndex} className="rounded-2xl border border-border/80 bg-background/50 p-4">
-                    <p className="text-sm font-semibold text-foreground mb-3">
-                      {qIndex + 1}. {q.prompt}
-                    </p>
-                    <div className="grid gap-2">
-                      {q.choices.map((choice, cIndex) => (
-                        <button
-                          key={cIndex}
-                          type="button"
-                          className="flex items-center text-left p-2.5 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          <span className="w-5 h-5 rounded-full border border-border flex items-center justify-center text-[10px] font-mono mr-2.5 shrink-0">
-                            {String.fromCharCode(65 + cIndex)}
-                          </span>
-                          <span>{choice}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <StoryQuiz
+              slug={slug}
+              title={seedMatch.quiz.title}
+              questions={seedMatch.quiz.questions.map((q) => ({
+                prompt: q.prompt,
+                choices: q.choices,
+              }))}
+            />
           )}
 
-          {/* Comments Section Anchor */}
-          <div id="comments" className="mt-12 border-t border-border pt-8 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-sans text-xl font-bold text-foreground flex items-center gap-2">
-                <MessageSquare className="h-5 w-5 text-primary" />
-                <span>Discussion (3 comments)</span>
-              </h3>
-              <span className="text-xs text-muted-foreground">Top comments</span>
-            </div>
-
-            <div className="space-y-4">
-              <div className="rounded-2xl border border-border bg-card p-4">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-foreground">Sam Ibarra</span>
-                  <span className="text-muted-foreground font-mono">2 days ago</span>
-                </div>
-                <p className="mt-2 text-sm text-foreground leading-relaxed">
-                  The 2 a.m. test is going straight into our team doc. We had a deploy last month where nobody could tell from the log whether the migration had run.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-border bg-card p-4 ml-6 border-l-2 border-l-primary">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-foreground">Lizan Sarkar · Author</span>
-                  <span className="text-muted-foreground font-mono">1 day ago</span>
-                </div>
-                <p className="mt-2 text-sm text-foreground leading-relaxed">
-                  That exact moment is why I wrote this. Splitting migrate into its own named step was the single biggest fix for us.
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* Interactive Comments Section */}
+          <StoryDiscussion slug={slug} />
         </div>
 
         {/* Right Sticky Sidebar (Matches story.jpg) */}
