@@ -84,7 +84,10 @@ const defaultStoryComments: Comment[] = [
   },
 ];
 
-export function ArticleReadingView({ article, relatedArticles }: ArticleReadingProps) {
+export function ArticleReadingView({
+  article,
+  relatedArticles,
+}: ArticleReadingProps) {
   // Top running line (scroll progress bar)
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -101,7 +104,9 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
   const [copiedLink, setCopiedLink] = useState(false);
 
   // Useful card state
-  const [usefulVote, setUsefulVote] = useState<"useful" | "not-for-me" | null>(null);
+  const [usefulVote, setUsefulVote] = useState<"useful" | "not-for-me" | null>(
+    null,
+  );
   const [usefulCount, setUsefulCount] = useState(14);
   const [following, setFollowing] = useState(false);
 
@@ -116,7 +121,8 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
   // Track window scroll progress for top running line and TOC
   useEffect(() => {
     const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const totalHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
       if (totalHeight > 0) {
         const progress = (window.scrollY / totalHeight) * 100;
         setScrollProgress(Math.min(100, Math.max(0, progress)));
@@ -216,14 +222,22 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
       {/* Main 7XL Container */}
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-4 pb-20">
         {/* Header & Hero Area (Matches media_1795183089924_9d22ddfd.jpg) */}
-        <header className="mx-auto max-w-3xl pt-6 pb-2 text-center">
+        <header className="mx-auto max-w-7xl pt-6 pb-2 text-center">
           {/* Breadcrumb: Articles > Engineering */}
-          <nav aria-label="Breadcrumb" className="text-xs text-neutral-500 font-medium flex items-center justify-center gap-1.5 mb-2">
-            <Link href="/articles" className="hover:text-neutral-900 dark:hover:text-white transition">
+          <nav
+            aria-label="Breadcrumb"
+            className="text-xs text-neutral-500 font-medium flex items-center justify-center gap-1.5 mb-2"
+          >
+            <Link
+              href="/articles"
+              className="hover:text-neutral-900 dark:hover:text-white transition"
+            >
               Articles
             </Link>
             <span className="text-neutral-400">&gt;</span>
-            <span className="text-neutral-900 dark:text-neutral-100 font-semibold">{article.category}</span>
+            <span className="text-neutral-900 dark:text-neutral-100 font-semibold">
+              {article.category}
+            </span>
           </nav>
 
           {/* Tags row: [ENGINEERING] pill + reading time */}
@@ -372,7 +386,11 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
                   aria-label={isPlaying ? "Pause audio" : "Play audio"}
                   className="flex size-6 items-center justify-center rounded-full bg-neutral-950 text-white hover:bg-neutral-800 transition"
                 >
-                  {isPlaying ? <Pause className="size-3 fill-current" /> : <Play className="size-3 fill-current ml-0.5" />}
+                  {isPlaying ? (
+                    <Pause className="size-3 fill-current" />
+                  ) : (
+                    <Play className="size-3 fill-current ml-0.5" />
+                  )}
                 </button>
                 <button
                   type="button"
@@ -385,15 +403,20 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
                 <span className="font-mono text-[10px] text-neutral-400">
                   {isPlaying ? "0:42" : "0:00"} / 1:15
                 </span>
-                <span className="text-[11px] font-medium text-neutral-400">Audio narration</span>
+                <span className="text-[11px] font-medium text-neutral-400">
+                  Audio narration
+                </span>
               </div>
             </div>
           )}
 
           {/* Large Cover Image */}
-          <div className="relative mx-auto mt-2 aspect-[2.1/1] max-w-4xl overflow-hidden rounded-3xl bg-neutral-100 dark:bg-neutral-800 shadow-xs">
+          <div className="relative mx-auto mt-2 aspect-[2.1/1] max-w-7xl overflow-hidden rounded-3xl bg-neutral-100 dark:bg-neutral-800 shadow-xs">
             <Image
-              src={article.coverImage || "https://images.unsplash.com/photo-1462642109801-4ac2971a3a51?auto=format&fit=crop&w=2400&q=80"}
+              src={
+                article.coverImage ||
+                "https://images.unsplash.com/photo-1462642109801-4ac2971a3a51?auto=format&fit=crop&w=2400&q=80"
+              }
               alt={article.title}
               fill
               priority
@@ -402,7 +425,8 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
             />
           </div>
           <p className="mt-2 text-center text-[11px] text-neutral-400 dark:text-neutral-500">
-            A quiet morning · Journal entries from the local-first design sprint.
+            A quiet morning · Journal entries from the local-first design
+            sprint.
           </p>
         </header>
 
@@ -416,11 +440,17 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
               onClick={handleLike}
               title="Thumbs up"
               className={`flex flex-col items-center justify-center transition cursor-pointer ${
-                userVote === "like" ? "text-[#c25e37]" : "hover:text-neutral-900 dark:hover:text-white"
+                userVote === "like"
+                  ? "text-[#c25e37]"
+                  : "hover:text-neutral-900 dark:hover:text-white"
               }`}
             >
-              <ThumbsUp className={`size-4 ${userVote === "like" ? "fill-current" : ""}`} />
-              <span className="text-[10px] font-mono font-bold leading-none mt-1">{likes}</span>
+              <ThumbsUp
+                className={`size-4 ${userVote === "like" ? "fill-current" : ""}`}
+              />
+              <span className="text-[10px] font-mono font-bold leading-none mt-1">
+                {likes}
+              </span>
             </button>
 
             {/* Thumbs down + count */}
@@ -429,11 +459,17 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
               onClick={handleDislike}
               title="Thumbs down"
               className={`flex flex-col items-center justify-center transition cursor-pointer ${
-                userVote === "dislike" ? "text-neutral-900 dark:text-white" : "hover:text-neutral-900 dark:hover:text-white"
+                userVote === "dislike"
+                  ? "text-neutral-900 dark:text-white"
+                  : "hover:text-neutral-900 dark:hover:text-white"
               }`}
             >
-              <ThumbsDown className={`size-4 ${userVote === "dislike" ? "fill-current" : ""}`} />
-              <span className="text-[10px] font-mono font-bold leading-none mt-1">{dislikes}</span>
+              <ThumbsDown
+                className={`size-4 ${userVote === "dislike" ? "fill-current" : ""}`}
+              />
+              <span className="text-[10px] font-mono font-bold leading-none mt-1">
+                {dislikes}
+              </span>
             </button>
 
             {/* Comments anchor */}
@@ -443,7 +479,9 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
               className="flex flex-col items-center justify-center hover:text-neutral-900 dark:hover:text-white transition cursor-pointer"
             >
               <MessageSquare className="size-4" />
-              <span className="text-[10px] font-mono font-bold leading-none mt-1">{comments.length}</span>
+              <span className="text-[10px] font-mono font-bold leading-none mt-1">
+                {comments.length}
+              </span>
             </a>
 
             <div className="h-4 w-px bg-neutral-200 dark:bg-neutral-800" />
@@ -469,34 +507,59 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
                   <span>Key takeaways</span>
                 </div>
                 <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200 italic mb-5 leading-relaxed">
-                  &ldquo;The useful notes were the short ones, written in the margins of the work itself.&rdquo;
+                  &ldquo;The useful notes were the short ones, written in the
+                  margins of the work itself.&rdquo;
                 </p>
 
                 {/* 3-column metadata table */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-3 gap-x-4 pt-4 border-t border-neutral-200/60 dark:border-neutral-800/80 text-[11px]">
                   <div>
-                    <span className="block text-neutral-400 uppercase text-[10px] font-semibold">Section</span>
-                    <span className="font-medium text-neutral-800 dark:text-neutral-200">{article.category}</span>
+                    <span className="block text-neutral-400 uppercase text-[10px] font-semibold">
+                      Section
+                    </span>
+                    <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                      {article.category}
+                    </span>
                   </div>
                   <div>
-                    <span className="block text-neutral-400 uppercase text-[10px] font-semibold">Reading time</span>
-                    <span className="font-medium text-neutral-800 dark:text-neutral-200">{article.readingTime || 1} min</span>
+                    <span className="block text-neutral-400 uppercase text-[10px] font-semibold">
+                      Reading time
+                    </span>
+                    <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                      {article.readingTime || 1} min
+                    </span>
                   </div>
                   <div>
-                    <span className="block text-neutral-400 uppercase text-[10px] font-semibold">Format</span>
-                    <span className="font-medium text-neutral-800 dark:text-neutral-200">Field dispatch</span>
+                    <span className="block text-neutral-400 uppercase text-[10px] font-semibold">
+                      Format
+                    </span>
+                    <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                      Field dispatch
+                    </span>
                   </div>
                   <div>
-                    <span className="block text-neutral-400 uppercase text-[10px] font-semibold">Published</span>
-                    <span className="font-medium text-neutral-800 dark:text-neutral-200">{formattedDate}</span>
+                    <span className="block text-neutral-400 uppercase text-[10px] font-semibold">
+                      Published
+                    </span>
+                    <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                      {formattedDate}
+                    </span>
                   </div>
                   <div>
-                    <span className="block text-neutral-400 uppercase text-[10px] font-semibold">Dispatch</span>
-                    <span className="font-medium text-neutral-800 dark:text-neutral-200">Issue #3</span>
+                    <span className="block text-neutral-400 uppercase text-[10px] font-semibold">
+                      Dispatch
+                    </span>
+                    <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                      Issue #3
+                    </span>
                   </div>
                   <div>
-                    <span className="block text-neutral-400 uppercase text-[10px] font-semibold">Words</span>
-                    <span className="font-medium text-neutral-800 dark:text-neutral-200">750 words</span>
+                    <span className="block text-neutral-400 uppercase text-[10px] font-semibold">
+                      Words
+                    </span>
+                    <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                      750 words
+                    </span>
                   </div>
                 </div>
               </div>
@@ -513,16 +576,23 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
                   </h2>
                   <div className="mt-3.5 space-y-3.5">
                     <p>
-                      A second system for notes becomes a second job. The notebook that lasts is the one that opens beside the file you are already editing.
+                      A second system for notes becomes a second job. The
+                      notebook that lasts is the one that opens beside the file
+                      you are already editing.
                     </p>
                     <p>
-                      The rewrite always promised a cleaner place for thoughts. The thoughts that mattered were already in the margin of the work, written while the problem was still warm.
+                      The rewrite always promised a cleaner place for thoughts.
+                      The thoughts that mattered were already in the margin of
+                      the work, written while the problem was still warm.
                     </p>
                   </div>
                 </section>
 
                 {/* Section 02 */}
-                <section id="short-on-purpose" className="scroll-mt-24 pt-6 border-t border-neutral-100 dark:border-neutral-800/80">
+                <section
+                  id="short-on-purpose"
+                  className="scroll-mt-24 pt-6 border-t border-neutral-100 dark:border-neutral-800/80"
+                >
                   <span className="text-xs font-bold text-[#c25e37] uppercase tracking-widest">
                     02
                   </span>
@@ -531,16 +601,22 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
                   </h2>
                   <div className="mt-3.5 space-y-3.5">
                     <p>
-                      We kept the entries short on purpose. A paragraph you can finish is a paragraph you will trust later.
+                      We kept the entries short on purpose. A paragraph you can
+                      finish is a paragraph you will trust later.
                     </p>
                     <p>
-                      A long note is a draft of a document nobody asked for. A short one is a reminder you can check without leaving the task.
+                      A long note is a draft of a document nobody asked for. A
+                      short one is a reminder you can check without leaving the
+                      task.
                     </p>
                   </div>
                 </section>
 
                 {/* Section 03 */}
-                <section id="what-survived" className="scroll-mt-24 pt-6 border-t border-neutral-100 dark:border-neutral-800/80">
+                <section
+                  id="what-survived"
+                  className="scroll-mt-24 pt-6 border-t border-neutral-100 dark:border-neutral-800/80"
+                >
                   <span className="text-xs font-bold text-[#c25e37] uppercase tracking-widest">
                     03
                   </span>
@@ -549,10 +625,14 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
                   </h2>
                   <div className="mt-3.5 space-y-3.5">
                     <p>
-                      After the rewrite, the surviving notes were the ones with a date, a file, and one sentence. The taxonomy did not survive. The sentence did.
+                      After the rewrite, the surviving notes were the ones with
+                      a date, a file, and one sentence. The taxonomy did not
+                      survive. The sentence did.
                     </p>
                     <p>
-                      If a note cannot be found from the work it describes, it is already lost. Put it where the next person will be standing.
+                      If a note cannot be found from the work it describes, it
+                      is already lost. Put it where the next person will be
+                      standing.
                     </p>
                   </div>
                 </section>
@@ -560,7 +640,9 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
 
               {/* Tags row at bottom of content card */}
               <div className="mt-10 pt-6 border-t border-neutral-100 dark:border-neutral-800 flex items-center gap-2 text-xs text-neutral-500">
-                <span className="font-medium text-neutral-400">Filed under:</span>
+                <span className="font-medium text-neutral-400">
+                  Filed under:
+                </span>
                 <span className="rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800 px-2.5 py-0.5 text-neutral-600 dark:text-neutral-300">
                   notes
                 </span>
@@ -589,7 +671,9 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
                     type="button"
                     onClick={() => {
                       setUsefulVote(usefulVote === "useful" ? null : "useful");
-                      setUsefulCount((c) => (usefulVote === "useful" ? c - 1 : c + 1));
+                      setUsefulCount((c) =>
+                        usefulVote === "useful" ? c - 1 : c + 1,
+                      );
                     }}
                     className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition cursor-pointer ${
                       usefulVote === "useful"
@@ -603,7 +687,11 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
 
                   <button
                     type="button"
-                    onClick={() => setUsefulVote(usefulVote === "not-for-me" ? null : "not-for-me")}
+                    onClick={() =>
+                      setUsefulVote(
+                        usefulVote === "not-for-me" ? null : "not-for-me",
+                      )
+                    }
                     className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-medium transition cursor-pointer ${
                       usefulVote === "not-for-me"
                         ? "border-neutral-900 bg-neutral-900 text-white"
@@ -642,7 +730,8 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
                     {article.authorName}
                   </h4>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 line-clamp-1">
-                    Staff writer at Lizan. Writing on systems, local-first software, and editorial tools.
+                    Staff writer at Lizan. Writing on systems, local-first
+                    software, and editorial tools.
                   </p>
                 </div>
               </div>
@@ -661,7 +750,10 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
             </div>
 
             {/* Card C: Conversation / Discussion Card */}
-            <div id="comments" className="rounded-2xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 sm:p-6 shadow-xs space-y-4">
+            <div
+              id="comments"
+              className="rounded-2xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 sm:p-6 shadow-xs space-y-4"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <MessageSquare className="size-4 text-[#c25e37]" />
@@ -698,18 +790,29 @@ export function ArticleReadingView({ article, relatedArticles }: ArticleReadingP
                   onClick={() => setShowComments(!showComments)}
                   className="text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition cursor-pointer"
                 >
-                  {showComments ? "Hide comments from the community ▴" : "Show comments from the community ▾"}
+                  {showComments
+                    ? "Hide comments from the community ▴"
+                    : "Show comments from the community ▾"}
                 </button>
 
                 {showComments && (
                   <div className="mt-3.5 space-y-3 pt-3 border-t border-neutral-100 dark:border-neutral-800">
                     {comments.map((c) => (
-                      <div key={c.id} className="rounded-xl border border-neutral-100 dark:border-neutral-800/80 p-3 bg-neutral-50/50 dark:bg-neutral-950/30 text-xs">
+                      <div
+                        key={c.id}
+                        className="rounded-xl border border-neutral-100 dark:border-neutral-800/80 p-3 bg-neutral-50/50 dark:bg-neutral-950/30 text-xs"
+                      >
                         <div className="flex items-center justify-between text-neutral-500 mb-1">
-                          <span className="font-semibold text-neutral-900 dark:text-white">{c.author}</span>
-                          <span className="text-[11px] text-neutral-400">{c.time}</span>
+                          <span className="font-semibold text-neutral-900 dark:text-white">
+                            {c.author}
+                          </span>
+                          <span className="text-[11px] text-neutral-400">
+                            {c.time}
+                          </span>
                         </div>
-                        <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed">{c.text}</p>
+                        <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                          {c.text}
+                        </p>
                       </div>
                     ))}
                   </div>
