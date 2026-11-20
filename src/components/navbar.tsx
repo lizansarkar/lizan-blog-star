@@ -9,7 +9,7 @@ import { ThemeToggle } from "./theme-toggle";
 export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [desksDropdown, setDesksDropdown] = useState(false);
+  const [desksOpen, setDesksOpen] = useState(false);
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -19,21 +19,20 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/95 backdrop-blur-md transition-colors">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand identity (matches reference image: black square icon with white L + brand name) */}
-        <div className="flex items-center gap-10">
-          <Link href="/" className="group flex items-center gap-2.5">
-            <span className="flex h-6 w-6 items-center justify-center rounded-[6px] bg-foreground text-background font-bold text-xs tracking-tight shadow-xs group-hover:scale-105 transition-transform">
-              L
-            </span>
-            <span className="font-sans text-[15px] font-bold tracking-tight text-foreground">
-              Lizan
-            </span>
-          </Link>
-        </div>
+    <header className="sticky top-3 sm:top-5 z-50 w-full px-3 sm:px-6 transition-all">
+      <div className="mx-auto flex h-[52px] max-w-5xl items-center justify-between rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/90 px-3 sm:px-4 shadow-sm backdrop-blur-md">
+        {/* Brand identity: Black rounded icon with white L & orange dot + Brand name */}
+        <Link href="/" className="flex items-center gap-2 pl-1 group">
+          <div className="flex h-7 w-7 items-center justify-center rounded-[7px] bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 font-bold text-sm tracking-tight relative shadow-xs group-hover:scale-105 transition-transform">
+            <span>L</span>
+            <span className="absolute bottom-1.5 right-1.5 h-1 w-1 rounded-full bg-[#c25e37]" />
+          </div>
+          <span className="font-sans text-[15px] font-bold tracking-tight text-neutral-900 dark:text-white">
+            Lizan<span className="text-[#c25e37]">.</span>
+          </span>
+        </Link>
 
-        {/* Center Navigation Links (matches reference: Home, Articles, About, Search + Ask Lizan) */}
+        {/* Center Navigation Links: Home, Articles, About, Search (Active item in terracotta) */}
         <nav className="hidden md:flex items-center gap-7 text-[13px] font-medium">
           {navLinks.map((link) => {
             const isActive =
@@ -46,130 +45,126 @@ export function Navbar() {
                 href={link.href}
                 className={`transition-colors ${
                   isActive
-                    ? "text-foreground font-semibold"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "text-[#c25e37] font-semibold"
+                    : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                 }`}
               >
                 {link.label}
               </Link>
             );
           })}
-          <Link
-            href="/ask"
-            className={`transition-colors flex items-center gap-1.5 ${
-              pathname.startsWith("/ask")
-                ? "text-primary font-semibold"
-                : "text-muted-foreground hover:text-primary"
-            }`}
-          >
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span>Ask Lizan</span>
-          </Link>
         </nav>
 
-        {/* Right Action Bar (matches reference: Theme Toggle, Sign in, Join ↗) */}
-        <div className="hidden md:flex items-center gap-5">
-          {/* Theme Toggle Sun/Moon icon */}
+        {/* Right Action Bar: Theme Icon, Sign in (bordered pill), Join ↗ (black pill with white arrow circle) */}
+        <div className="hidden md:flex items-center gap-2.5">
+          {/* Theme toggle */}
           <ThemeToggle />
 
-          {/* Desks subtle dropdown */}
+          {/* Desks subtle trigger */}
           <div className="relative">
             <button
               type="button"
-              onClick={() => setDesksDropdown(!desksDropdown)}
-              onBlur={() => setTimeout(() => setDesksDropdown(false), 200)}
-              className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 cursor-pointer"
+              onClick={() => setDesksOpen(!desksOpen)}
+              onBlur={() => setTimeout(() => setDesksOpen(false), 200)}
+              className="text-[12px] font-medium text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white px-2 py-1 transition-colors flex items-center gap-1 cursor-pointer"
             >
               <span>Desks</span>
               <ChevronDown className="h-3 w-3 opacity-60" />
             </button>
-            {desksDropdown && (
-              <div className="absolute right-0 mt-2 w-44 rounded-xl border border-border bg-card p-1.5 shadow-xl animate-in fade-in zoom-in-95 duration-150 text-xs z-50">
+            {desksOpen && (
+              <div className="absolute right-0 mt-2 w-44 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-1.5 shadow-xl animate-in fade-in zoom-in-95 duration-150 text-xs z-50">
                 <Link
                   href="/desk/reader"
-                  className="block px-3 py-2 rounded-lg hover:bg-muted text-foreground font-medium transition-colors"
+                  className="block px-3 py-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-800 dark:text-neutral-200 font-medium transition-colors"
                 >
                   Reader Desk
                 </Link>
                 <Link
                   href="/desk/writer"
-                  className="block px-3 py-2 rounded-lg hover:bg-muted text-foreground font-medium transition-colors"
+                  className="block px-3 py-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-800 dark:text-neutral-200 font-medium transition-colors"
                 >
                   Writer Desk
                 </Link>
                 <Link
                   href="/desk/admin"
-                  className="block px-3 py-2 rounded-lg hover:bg-muted text-foreground font-medium transition-colors"
+                  className="block px-3 py-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-800 dark:text-neutral-200 font-medium transition-colors"
                 >
                   Admin Desk
+                </Link>
+                <Link
+                  href="/ask"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900 text-[#c25e37] font-semibold transition-colors"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span>Ask Lizan AI</span>
                 </Link>
               </div>
             )}
           </div>
 
-          {/* Sign in */}
+          {/* Sign in: Pill with subtle border matching screenshot */}
           <Link
             href="/login"
-            className="text-[13px] font-medium text-foreground hover:text-primary transition-colors"
+            className="rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-transparent px-4 py-1 text-xs font-medium text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
           >
             Sign in
           </Link>
 
-          {/* Join ↗ (black pill with tiny circle arrow up-right) */}
+          {/* Join ↗: Black pill with white circle containing black arrow matching screenshot */}
           <Link
             href="/register"
-            className="group inline-flex h-8 items-center gap-1.5 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-3.5 text-xs font-semibold hover:opacity-90 transition-opacity"
+            className="group inline-flex h-8 items-center gap-2 rounded-full bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 pl-3.5 pr-1.5 text-xs font-semibold hover:opacity-90 shadow-xs transition-all"
           >
             <span>Join</span>
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white/20 dark:bg-black/20 group-hover:translate-x-0.5 transition-transform">
-              <ArrowUpRight className="h-2.5 w-2.5" />
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white dark:bg-neutral-950 text-neutral-950 dark:text-white group-hover:translate-x-0.5 transition-transform">
+              <ArrowUpRight className="h-3 w-3 stroke-[2.5]" />
             </span>
           </Link>
         </div>
 
         {/* Mobile menu trigger */}
-        <div className="flex md:hidden items-center gap-2">
+        <div className="flex md:hidden items-center gap-1">
           <ThemeToggle />
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900"
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="border-b border-border bg-background px-4 py-5 md:hidden space-y-4">
-          <nav className="flex flex-col gap-3.5 text-sm font-medium">
+        <div className="mx-auto mt-2 max-w-5xl rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/95 p-5 shadow-xl backdrop-blur-md md:hidden animate-in fade-in duration-150">
+          <nav className="flex flex-col gap-3 text-sm font-medium">
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-foreground hover:text-primary transition-colors"
+              className="text-neutral-800 dark:text-neutral-200 hover:text-[#c25e37]"
             >
               Home
             </Link>
             <Link
               href="/articles"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-neutral-800 dark:text-neutral-200 hover:text-[#c25e37]"
             >
               Articles
             </Link>
             <Link
               href="/about"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-neutral-800 dark:text-neutral-200 hover:text-[#c25e37]"
             >
               About
             </Link>
             <Link
               href="/search"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-[#c25e37] font-semibold"
             >
               Search
             </Link>
@@ -181,40 +176,40 @@ export function Navbar() {
               <Sparkles className="h-4 w-4" />
               <span>Ask Lizan (AI Assistant)</span>
             </Link>
-            <div className="h-px bg-border/60 my-1" />
+            <div className="h-px bg-neutral-200 dark:bg-neutral-800 my-1" />
             <Link
               href="/desk/reader"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-muted-foreground hover:text-foreground text-xs"
+              className="text-neutral-500 hover:text-neutral-900 text-xs"
             >
               Reader Desk
             </Link>
             <Link
               href="/desk/writer"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-muted-foreground hover:text-foreground text-xs"
+              className="text-neutral-500 hover:text-neutral-900 text-xs"
             >
               Writer Desk
             </Link>
             <Link
               href="/desk/admin"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-muted-foreground hover:text-foreground text-xs"
+              className="text-neutral-500 hover:text-neutral-900 text-xs"
             >
               Admin Desk
             </Link>
-            <div className="pt-3 border-t border-border flex gap-2">
+            <div className="pt-2 flex gap-2">
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 text-center py-2 rounded-full bg-muted text-foreground text-xs font-semibold"
+                className="flex-1 text-center py-2 rounded-full border border-neutral-200 text-xs font-semibold text-neutral-800"
               >
                 Sign in
               </Link>
               <Link
                 href="/register"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 text-center py-2 rounded-full bg-foreground text-background text-xs font-semibold"
+                className="flex-1 text-center py-2 rounded-full bg-neutral-950 text-white text-xs font-semibold"
               >
                 Join
               </Link>

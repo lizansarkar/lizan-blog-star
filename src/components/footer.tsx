@@ -1,163 +1,147 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUp } from "lucide-react";
+import { useState } from "react";
+import { Star, Send, Check } from "lucide-react";
 
 export function Footer() {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || loading) return;
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setSubscribed(true);
+        setEmail("");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <footer className="w-full border-t border-border/60 bg-card/30 pt-16 pb-12 transition-colors relative overflow-hidden">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Main 5-column grid matching reference image */}
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 lg:gap-12 pb-16 border-b border-border/50">
-          {/* Brand Col (2 cols wide on desktop) */}
-          <div className="col-span-2 space-y-4">
-            <Link href="/" className="inline-flex items-center gap-2.5">
-              <span className="flex h-6 w-6 items-center justify-center rounded-[6px] bg-foreground text-background font-bold text-xs tracking-tight shadow-xs">
-                L
+    <footer className="w-full border-t border-border/60 bg-card/40 transition-colors">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+          {/* Brand & mission */}
+          <div className="md:col-span-2 space-y-4">
+            <Link href="/" className="flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+                <Star className="h-3.5 w-3.5 fill-current" />
               </span>
-              <span className="font-sans text-base font-bold tracking-tight text-foreground">
-                Lizan
-              </span>
+              <span className="font-sans text-lg font-bold tracking-tight">Lizan Blog Star</span>
             </Link>
-            <p className="max-w-xs text-xs text-muted-foreground leading-relaxed">
-              Lizan is a modern publication for people who build software, shape products, and care how the work reads.
+            <p className="max-w-md text-sm text-muted-foreground leading-relaxed">
+              A calm publication for people who build software, shape products, and care deeply about how engineering reads. Founded by Lizan Sarkar.
             </p>
+
+            {/* Newsletter input */}
+            <div className="pt-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                Subscribe to our weekly dispatch
+              </p>
+              {subscribed ? (
+                <div className="inline-flex items-center gap-2 text-xs text-primary font-medium bg-primary/10 px-3 py-2 rounded-lg">
+                  <Check className="h-4 w-4" />
+                  <span>Thank you for subscribing!</span>
+                </div>
+              ) : (
+                <form onSubmit={handleSubscribe} className="flex max-w-sm gap-2">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="reader@example.com"
+                    className="flex-1 h-9 rounded-lg border border-border bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                  <button
+                    type="submit"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-foreground px-3 text-xs font-medium text-background hover:opacity-90 transition-opacity"
+                  >
+                    <span>Join</span>
+                    <Send className="h-3 w-3" />
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
 
-          {/* Col 1: Read */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-semibold text-foreground tracking-wider">Read</h4>
-            <ul className="space-y-2 text-xs text-muted-foreground">
-              <li>
-                <Link href="/" className="hover:text-foreground transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/articles" className="hover:text-foreground transition-colors">
-                  Articles
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-foreground transition-colors">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link href="/search" className="hover:text-foreground transition-colors">
-                  Search
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 2: Sections */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-semibold text-foreground tracking-wider">Sections</h4>
-            <ul className="space-y-2 text-xs text-muted-foreground">
-              <li>
-                <Link href="/section/ai" className="hover:text-foreground transition-colors">
-                  AI
-                </Link>
-              </li>
-              <li>
-                <Link href="/section/design" className="hover:text-foreground transition-colors">
-                  Design
-                </Link>
-              </li>
-              <li>
-                <Link href="/section/engineering" className="hover:text-foreground transition-colors">
-                  Engineering
-                </Link>
-              </li>
-              <li>
-                <Link href="/section/product" className="hover:text-foreground transition-colors">
-                  Product
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 3: Account */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-semibold text-foreground tracking-wider">Account</h4>
-            <ul className="space-y-2 text-xs text-muted-foreground">
-              <li>
-                <Link href="/login" className="hover:text-foreground transition-colors">
-                  Sign in
-                </Link>
-              </li>
-              <li>
-                <Link href="/register" className="hover:text-foreground transition-colors">
-                  Create account
-                </Link>
-              </li>
+          {/* Desks */}
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">Operational Desks</h3>
+            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
               <li>
                 <Link href="/desk/reader" className="hover:text-foreground transition-colors">
-                  Your desk
+                  Reader Desk (Saves & History)
                 </Link>
               </li>
               <li>
-                <a href="#newsletter" className="hover:text-foreground transition-colors">
-                  Newsletter
-                </a>
+                <Link href="/desk/writer" className="hover:text-foreground transition-colors">
+                  Writer Desk (Drafts & Editor)
+                </Link>
+              </li>
+              <li>
+                <Link href="/desk/admin" className="hover:text-foreground transition-colors">
+                  Admin Desk (Analytics & Roles)
+                </Link>
+              </li>
+              <li>
+                <Link href="/ask" className="hover:text-foreground transition-colors">
+                  Ask Lizan (AI Assistant)
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Col 4: Help */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-semibold text-foreground tracking-wider">Help</h4>
-            <ul className="space-y-2 text-xs text-muted-foreground">
-              <li>
-                <Link href="/ask" className="hover:text-foreground transition-colors">
-                  Ask Lizan
-                </Link>
-              </li>
+          {/* Legal & About */}
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">Publication</h3>
+            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
               <li>
                 <Link href="/about" className="hover:text-foreground transition-colors">
-                  Contact
+                  About Lizan
                 </Link>
               </li>
               <li>
                 <Link href="/privacy" className="hover:text-foreground transition-colors">
-                  Privacy
+                  Privacy Policy
                 </Link>
               </li>
               <li>
                 <Link href="/terms" className="hover:text-foreground transition-colors">
-                  Terms
+                  Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/feed.xml" className="hover:text-foreground transition-colors">
-                  RSS
-                </Link>
+                <a
+                  href="https://github.com/lizansarkar/lizan-blog-star"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-foreground transition-colors"
+                >
+                  GitHub Repository
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom copyright row */}
-        <div className="pt-8 flex items-center justify-between text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} Lizan. All rights reserved.</p>
-          <button
-            type="button"
-            onClick={scrollToTop}
-            className="hover:text-foreground transition-colors flex items-center gap-1.5"
-          >
-            <span>Back to top</span>
-            <ArrowUp className="h-3 w-3" />
-          </button>
-        </div>
-
-        {/* Giant subtle watermark matching reference image bottom */}
-        <div className="pt-12 pb-4 text-center select-none pointer-events-none opacity-[0.04] dark:opacity-[0.06] font-sans font-extrabold text-7xl sm:text-9xl md:text-[11rem] tracking-tight text-foreground">
-          Lizan
+        <div className="mt-12 border-t border-border/50 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-muted-foreground gap-4">
+          <p>© {new Date().getFullYear()} Lizan Blog Star. All rights reserved.</p>
+          <p>Crafted by Lizan Sarkar.</p>
         </div>
       </div>
     </footer>
