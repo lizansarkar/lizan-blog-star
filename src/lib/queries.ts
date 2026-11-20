@@ -20,10 +20,10 @@ export async function getSettings(): Promise<SiteSettingData> {
 
   return {
     id: 1,
-    siteName: "Lizan Blog Star",
-    tagline: "A calmer publication for technology, engineering, and digital craft.",
+    siteName: "Lizan",
+    tagline: "A calmer place for technology.",
     description:
-      "Lizan Blog Star is an editorial publication for people who build software, shape digital products, and care deeply about how engineering work reads.",
+      "Lizan is a modern publication for people who build software, shape products, and care how the work reads.",
   };
 }
 

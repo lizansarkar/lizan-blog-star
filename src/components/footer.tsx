@@ -69,23 +69,31 @@ export function Footer() {
                 <span>You are subscribed to the weekly issue.</span>
               </div>
             ) : (
-              <form onSubmit={handleSubscribe} className="mx-auto mt-6 flex max-w-md items-center gap-2">
-                <input
-                  id="footer-email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="h-11 flex-1 rounded-full border border-border bg-card px-4 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-110 disabled:opacity-50"
+              <form onSubmit={handleSubscribe} className="mx-auto mt-6 max-w-md">
+                <label
+                  htmlFor="footer-email"
+                  className="block text-left text-xs font-medium text-muted-foreground mb-1 ml-4"
                 >
-                  {loading ? "..." : "Subscribe"}
-                </button>
+                  Email
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    id="footer-email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="h-11 flex-1 rounded-full border border-border bg-card px-4 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-110 disabled:opacity-50"
+                  >
+                    {loading ? "..." : "Subscribe"}
+                  </button>
+                </div>
               </form>
             )}
 

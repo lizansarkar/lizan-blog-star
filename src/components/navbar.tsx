@@ -20,9 +20,13 @@ export function Navbar() {
 
   return (
     <header className="sticky top-3 sm:top-5 z-50 w-full px-3 sm:px-6 transition-all">
-      <div className="mx-auto flex h-[52px] max-w-7xl items-center justify-between rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/90 px-3 sm:px-4 shadow-sm backdrop-blur-md">
+      <div className="mx-auto flex h-[52px] max-w-4xl sm:max-w-5xl items-center justify-between rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/90 px-3.5 sm:px-4 shadow-sm backdrop-blur-md">
         {/* Brand identity: Black rounded icon with white L & orange dot + Brand name */}
-        <Link href="/" className="flex items-center gap-2 pl-1 group">
+        <Link href="/" className="flex items-center gap-2 pl-0.5 group">
+          <div className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-neutral-950 text-white font-bold text-[13px] tracking-tight shadow-xs">
+            <span>L</span>
+            <span className="text-[#c25e37] text-[15px] leading-none mb-0.5 font-bold">.</span>
+          </div>
           <span className="font-sans text-[15px] font-bold tracking-tight text-neutral-900 dark:text-white">
             Lizan<span className="text-[#c25e37]">.</span>
           </span>
@@ -34,7 +38,7 @@ export function Navbar() {
             const isActive =
               link.href === "/"
                 ? pathname === "/"
-                : pathname.startsWith(link.href);
+                : pathname === link.href || pathname.startsWith(link.href + "/");
             return (
               <Link
                 key={link.href}
@@ -52,7 +56,7 @@ export function Navbar() {
         </nav>
 
         {/* Right Action Bar: Theme Icon, Sign in (bordered pill), Join ↗ (black pill with white arrow circle) */}
-        <div className="hidden md:flex items-center gap-2.5">
+        <div className="hidden md:flex items-center gap-2 sm:gap-2.5">
           {/* Theme toggle */}
           <ThemeToggle />
 
@@ -62,7 +66,7 @@ export function Navbar() {
               type="button"
               onClick={() => setDesksOpen(!desksOpen)}
               onBlur={() => setTimeout(() => setDesksOpen(false), 200)}
-              className="text-[12px] font-medium text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white px-2 py-1 transition-colors flex items-center gap-1 cursor-pointer"
+              className="text-[12px] font-medium text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white px-1.5 py-1 transition-colors flex items-center gap-1 cursor-pointer"
             >
               <span>Desks</span>
               <ChevronDown className="h-3 w-3 opacity-60" />
@@ -98,15 +102,15 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Sign in: Pill with subtle border matching screenshot */}
+          {/* Sign in: Pill with subtle border matching reference */}
           <Link
             href="/login"
-            className="rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-transparent px-4 py-1 text-xs font-medium text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
+            className="rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-transparent px-3.5 py-1 text-xs font-medium text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
           >
             Sign in
           </Link>
 
-          {/* Join ↗: Black pill with white circle containing black arrow matching screenshot */}
+          {/* Join ↗: Black pill with white circle containing black arrow matching reference */}
           <Link
             href="/register"
             className="group inline-flex h-8 items-center gap-2 rounded-full bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 pl-3.5 pr-1.5 text-xs font-semibold hover:opacity-90 shadow-xs transition-all"
@@ -138,7 +142,7 @@ export function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="mx-auto mt-2 max-w-5xl rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/95 p-5 shadow-xl backdrop-blur-md md:hidden animate-in fade-in duration-150">
+        <div className="mx-auto mt-2 max-w-4xl rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/95 p-5 shadow-xl backdrop-blur-md md:hidden animate-in fade-in duration-150">
           <nav className="flex flex-col gap-3 text-sm font-medium">
             <Link
               href="/"
@@ -157,14 +161,14 @@ export function Navbar() {
             <Link
               href="/about"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-neutral-800 dark:text-neutral-200 hover:text-[#c25e37]"
+              className="text-[#c25e37] font-semibold"
             >
               About
             </Link>
             <Link
               href="/search"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-[#c25e37] font-semibold"
+              className="text-neutral-800 dark:text-neutral-200 hover:text-[#c25e37]"
             >
               Search
             </Link>

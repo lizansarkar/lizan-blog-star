@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { FloatingAssistant } from "@/components/floating-assistant";
 
 export default function SiteLayout({
   children,
@@ -7,10 +8,11 @@ export default function SiteLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-background relative">
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
+      <FloatingAssistant />
     </div>
   );
 }
