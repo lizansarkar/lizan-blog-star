@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 export interface TickerItem {
   id: string;
@@ -15,45 +14,76 @@ interface TrendingTickerProps {
 }
 
 export function TrendingTicker({ items }: TrendingTickerProps) {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    if (items.length <= 1) return;
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % items.length);
-    }, 4500);
-    return () => clearInterval(interval);
-  }, [items.length]);
-
   if (!items || items.length === 0) return null;
 
-  const current = items[index];
-
   return (
-    <div className="flex items-center gap-3 py-3 px-4 rounded-2xl border border-border/70 bg-card/40 text-xs transition-colors">
-      <div className="flex items-center gap-2 shrink-0">
-        <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-        <span className="font-bold tracking-wider uppercase text-foreground">
-          Trending
+    <section
+      aria-label="Trending stories"
+      className="mt-5 flex items-stretch overflow-hidden rounded-full border border-border bg-card shadow-[0_10px_40px_-28px_rgba(0,0,0,0.35)]"
+    >
+      {/* Left fixed badge */}
+      <p className="relative z-10 flex shrink-0 items-center gap-2 border-r border-border bg-card pr-4 pl-5 text-xs font-semibold tracking-[0.16em] uppercase">
+        <span className="relative flex size-2">
+          <span className="absolute inset-0 animate-ping rounded-full bg-primary/60 motion-reduce:hidden" />
+          <span className="relative size-2 rounded-full bg-primary" />
         </span>
-      </div>
+        Trending
+      </p>
 
-      <div className="h-3 w-px bg-border/60 shrink-0" />
-
-      <div className="overflow-hidden whitespace-nowrap text-muted-foreground flex items-center gap-2">
-        <span className="font-mono text-primary font-semibold">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-        <span className="font-semibold uppercase tracking-wider text-[10px] text-foreground">
-          {current.category}
-        </span>
-        <Link
-          href={`/article/${current.slug}`}
-          className="text-foreground hover:text-primary transition-colors hover:underline truncate"
+      {/* Marquee conveyor */}
+      <div className="marquee relative min-w-0 flex-1 overflow-hidden mask-x-from-90% mask-x-to-100% motion-reduce:overflow-x-auto">
+        <div
+          className="marquee-track flex w-max hover:[animation-play-state:paused]"
+          style={{ "--marquee-duration": "56s" } as React.CSSProperties}
         >
-          {current.title}
-        </Link>
+          {/* First loop */}
+          <ul className="flex shrink-0 items-center">
+            {items.map((item, idx) => (
+              <li key={item.id} className="flex items-center">
+                <Link
+                  href={`/article/${item.slug}`}
+                  className="group flex items-center gap-3 px-6 py-3.5 whitespace-nowrap"
+                >
+                  <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-[11px] font-semibold tracking-[0.14em] text-primary uppercase">
+                    {item.category}
+                  </span>
+                  <span className="link-sweep text-sm font-medium text-foreground">
+                    {item.title}
+                  </span>
+                </Link>
+                <span className="size-1 rounded-full bg-foreground/25" aria-hidden="true" />
+              </li>
+            ))}
+          </ul>
+
+          {/* Duplicate loop for seamless infinite marquee */}
+          <ul className="flex shrink-0 items-center" aria-hidden="true">
+            {items.map((item, idx) => (
+              <li key={`dup-${item.id}`} className="flex items-center">
+                <Link
+                  href={`/article/${item.slug}`}
+                  tabIndex={-1}
+                  className="group flex items-center gap-3 px-6 py-3.5 whitespace-nowrap"
+                >
+                  <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-[11px] font-semibold tracking-[0.14em] text-primary uppercase">
+                    {item.category}
+                  </span>
+                  <span className="link-sweep text-sm font-medium text-foreground">
+                    {item.title}
+                  </span>
+                </Link>
+                <span className="size-1 rounded-full bg-foreground/25" aria-hidden="true" />
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

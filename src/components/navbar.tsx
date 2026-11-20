@@ -20,13 +20,14 @@ export function Navbar() {
 
   return (
     <header className="sticky top-3 sm:top-5 z-50 w-full px-3 sm:px-6 transition-all">
-      <div className="mx-auto flex h-[52px] max-w-5xl items-center justify-between rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/90 px-3 sm:px-4 shadow-sm backdrop-blur-md">
+      <div className="mx-auto flex h-[52px] max-w-7xl items-center justify-between rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/90 px-3 sm:px-4 shadow-sm backdrop-blur-md">
         {/* Brand identity: Black rounded icon with white L & orange dot + Brand name */}
         <Link href="/" className="flex items-center gap-2 pl-1 group">
-          <div className="flex h-7 w-7 items-center justify-center rounded-[7px] bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 font-bold text-sm tracking-tight relative shadow-xs group-hover:scale-105 transition-transform">
-            <span>L</span>
-            <span className="absolute bottom-1.5 right-1.5 h-1 w-1 rounded-full bg-[#c25e37]" />
-          </div>
+          <svg viewBox="0 0 32 32" className="size-7 shrink-0 text-foreground" aria-hidden="true">
+            <rect width="32" height="32" rx="9" className="fill-current" />
+            <path d="M8.4 7h5.4v12.2h8.8v5.4H8.4V7z" className="fill-background" />
+            <circle cx="25.6" cy="22.1" r="2.15" className="fill-[#c25e37]" />
+          </svg>
           <span className="font-sans text-[15px] font-bold tracking-tight text-neutral-900 dark:text-white">
             Lizan<span className="text-[#c25e37]">.</span>
           </span>
@@ -131,7 +132,11 @@ export function Navbar() {
             className="inline-flex h-8 w-8 items-center justify-center rounded-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900"
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            {mobileMenuOpen ? (
+              <X className="h-4 w-4" />
+            ) : (
+              <Menu className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>

@@ -1,193 +1,409 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { format } from "date-fns";
 
-export interface FeaturedItem {
+export interface HeroArticle {
   id: string;
   title: string;
-  italicWord?: string;
   slug: string;
-  category: string;
   excerpt: string;
   coverImage: string;
+  publishedAt: string | Date;
   authorName: string;
-  authorInitials: string;
-  publishedAt: Date;
+  authorSlug: string;
+  categoryName: string;
+  categorySlug: string;
+  readingTime?: string;
+  tags?: { name: string; slug: string }[];
 }
 
 interface HomeHeroProps {
-  items: FeaturedItem[];
+  articles: HeroArticle[];
 }
 
-export function HomeHero({ items }: HomeHeroProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(
+    (notify) => {
+      if (typeof window === "undefined") return () => {};
+      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+      mq.addEventListener("change", notify);
+      return () => mq.removeEventListener("change", notify);
+    },
+    () => (typeof window !== "undefined" ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false),
+    () => false
+  );
+}
 
-  if (!items || items.length === 0) return null;
+function padZero(num: number) {
+  return num < 10 ? `0${num}` : `${num}`;
+}
 
-  const current = items[activeIndex];
+export function HomeHero({ articles }: HomeHeroProps) {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [prevIdx, setPrevIdx] = useState(-1);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [inView, setInView] = useState(true);
+  const [docVisible, setDocVisible] = useState(true);
 
-  const handlePrev = () => {
-    setActiveIndex((prev) => (prev === 0 ? items.length - 1 : prev - 1));
-  };
+  const containerRef = useRef<HTMLDivElement>(null);
+  const touchStartRef = useRef<number | null>(null);
+  const prefersReduced = usePrefersReducedMotion();
 
-  const handleNext = () => {
-    setActiveIndex((prev) => (prev === items.length - 1 ? 0 : prev + 1));
-  };
+  const total = articles.length;
+  const isAutoPlaying = total > 1 && isPlaying && !prefersReduced && !isHovered && !isFocused && inView && docVisible;
 
-  // Render title with styled accent word
-  const renderStyledTitle = (title: string, italicWord?: string) => {
-    if (!italicWord) return title;
-    const parts = title.split(new RegExp(`(${italicWord})`, "gi"));
-    return parts.map((part, i) =>
-      part.toLowerCase() === italicWord.toLowerCase() ? (
-        <span key={i} className="font-serif italic font-normal text-amber-400 dark:text-amber-300">
-          {part}
-        </span>
-      ) : (
-        part
-      )
+  // Viewport observer
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(Boolean(entry?.isIntersecting));
+      },
+      { threshold: 0.25 }
     );
+    observer.observe(el);
+
+    const onVis = () => setDocVisible(!document.hidden);
+    document.addEventListener("visibilitychange", onVis);
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, []);
+
+  const goTo = (idx: number) => {
+    const next = (idx + total) % total;
+    if (next !== activeIdx) {
+      setPrevIdx(activeIdx);
+      setActiveIdx(next);
+    }
   };
+
+  // Keyboard navigation
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft") goTo(activeIdx - 1);
+    if (e.key === "ArrowRight") goTo(activeIdx + 1);
+  };
+
+  // Touch swipes
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartRef.current = e.touches[0]?.clientX ?? null;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartRef.current === null) return;
+    const diff = (e.changedTouches[0]?.clientX ?? touchStartRef.current) - touchStartRef.current;
+    touchStartRef.current = null;
+    if (Math.abs(diff) >= 48) {
+      goTo(activeIdx + (diff < 0 ? 1 : -1));
+    }
+  };
+
+  if (!total) return null;
+
+  const activeArticle = articles[activeIdx];
 
   return (
-    <div className="group relative overflow-hidden rounded-3xl bg-neutral-950 text-white shadow-2xl transition-all">
-      {/* Background Image with Dark Vignette Overlay */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={current.coverImage}
-          alt={current.title}
-          fill
-          priority
-          className="object-cover opacity-45 brightness-90 transition-all duration-700 ease-out"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-      </div>
+    <div
+      ref={containerRef}
+      onKeyDown={onKeyDown}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsFocused(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+          setIsFocused(false);
+        }
+      }}
+      className="relative isolate h-[min(86svh,44rem)] min-h-[34rem] overflow-hidden rounded-[2rem] bg-neutral-950 text-white shadow-[0_40px_120px_-60px_rgba(20,12,6,0.65)] sm:h-[min(80svh,46rem)] lg:min-h-[36rem]"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Featured stories"
+    >
+      <p className="sr-only" aria-live={isAutoPlaying ? "off" : "polite"}>
+        Story {activeIdx + 1} of {total}: {activeArticle.title}
+      </p>
 
-      {/* Main Content Area */}
-      <div className="relative z-10 grid min-h-[520px] grid-cols-1 lg:grid-cols-12 p-6 sm:p-10 lg:p-12 items-end gap-8">
-        {/* Left Column: Story details */}
-        <div className="lg:col-span-8 flex flex-col justify-end">
-          {/* Category & Tag */}
-          <div className="flex items-center gap-3 text-xs tracking-wider uppercase font-semibold">
-            <span className="rounded-full bg-amber-600/90 px-3 py-1 text-white shadow-sm font-bold">
-              {current.category}
-            </span>
-            <span className="text-neutral-400 font-mono text-[11px]">
-              FEATURED STORY
-            </span>
-          </div>
+      {/* Slides */}
+      {articles.map((article, idx) => {
+        const isActive = idx === activeIdx;
+        const isPrev = idx === prevIdx;
+        const words = article.title.split(" ");
+        const italicIdx = words.length > 3 ? 1 : -1;
+        const formattedDate = article.publishedAt
+          ? format(new Date(article.publishedAt), "MMMM d, yyyy")
+          : "";
+        const initials = article.authorName
+          ? article.authorName
+              .split(" ")
+              .map((w) => w[0])
+              .join("")
+              .slice(0, 2)
+          : "LZ";
 
-          {/* Large Title */}
-          <h1 className="mt-4 font-sans text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1] max-w-2xl">
-            <Link href={`/article/${current.slug}`} className="hover:underline">
-              {renderStyledTitle(current.title, current.italicWord || "quiet")}
-            </Link>
-          </h1>
-
-          {/* Subtitle / Excerpt */}
-          <p className="mt-4 text-sm sm:text-base text-neutral-300 max-w-xl leading-relaxed">
-            {current.excerpt}
-          </p>
-
-          {/* Action & Byline */}
-          <div className="mt-8 flex flex-wrap items-center gap-5">
-            <Link
-              href={`/article/${current.slug}`}
-              className="inline-flex h-11 items-center gap-2 rounded-full bg-white px-6 text-xs font-bold text-black hover:bg-neutral-100 shadow-lg transition-transform hover:scale-105"
-            >
-              <span>Read the story</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-800 text-xs font-bold text-white border border-neutral-700">
-                {current.authorInitials}
-              </div>
-              <div className="text-xs">
-                <div className="font-semibold text-white">{current.authorName}</div>
-                <div className="text-[11px] text-neutral-400 font-mono">
-                  {format(current.publishedAt, "MMMM d, yyyy")}
-                </div>
+        return (
+          <article
+            key={article.id}
+            data-active={isActive}
+            aria-roledescription="slide"
+            aria-label={`${idx + 1} of ${total}`}
+            aria-hidden={!isActive}
+            inert={!isActive ? true : undefined}
+            className={`hero-slide absolute inset-0 ${
+              isActive
+                ? "z-20 opacity-100 transition-opacity duration-1400 ease-cinema"
+                : isPrev
+                ? "z-10 opacity-100"
+                : "invisible z-0 opacity-0"
+            }`}
+          >
+            {/* Background Parallax & Zoom */}
+            <div className="hero-parallax absolute inset-x-0 -top-[14%] bottom-0">
+              <div className="hero-zoom absolute inset-0 will-change-transform">
+                <Image
+                  src={article.coverImage}
+                  alt=""
+                  fill
+                  priority={idx === 0}
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  sizes="(min-width: 1280px) 1280px, 100vw"
+                  className="object-cover"
+                />
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Right Column: Mini Carousel Switcher */}
-        <div className="lg:col-span-4 flex flex-col justify-end">
-          <div className="rounded-2xl border border-white/10 bg-black/60 p-4 backdrop-blur-md">
-            {/* Header with Counter & Prev/Next */}
-            <div className="flex items-center justify-between text-xs font-mono text-neutral-400 pb-3 border-b border-white/10">
-              <span className="uppercase tracking-wider font-semibold text-white">Featured</span>
-              <div className="flex items-center gap-2">
-                <span>
-                  {String(activeIndex + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
+            {/* Overlays matching exact noksha.dev styling */}
+            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/35 to-black/10" />
+            <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_0%_100%,rgba(192,107,61,0.28),transparent_55%)]" />
+
+            {/* Content Foreground */}
+            <div className="relative z-10 flex h-full flex-col justify-end px-6 pt-20 pb-8 sm:px-12 sm:pb-12 lg:pr-[26rem] lg:pb-14 xl:px-16 xl:pr-[28rem]">
+              {/* Category & Badge */}
+              <div className="hero-rise flex flex-wrap items-center gap-2.5" style={{ "--d": "0.12s" } as React.CSSProperties}>
+                <Link
+                  href={`/category/${article.categorySlug}`}
+                  className="rounded-full bg-primary px-3 py-1 text-[11px] font-semibold tracking-[0.14em] text-primary-foreground uppercase transition hover:brightness-110"
+                >
+                  {article.categoryName}
+                </Link>
+                <span className="text-xs font-medium tracking-[0.14em] text-white/70 uppercase">
+                  Featured story
                 </span>
-                <div className="flex items-center gap-1 ml-2">
-                  <button
-                    type="button"
-                    onClick={handlePrev}
-                    aria-label="Previous story"
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    aria-label="Next story"
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
-                  >
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </button>
+              </div>
+
+              {/* Title with word animation & italic highlight */}
+              <h1 className="mt-5 max-w-[18ch] text-[2.5rem] leading-[1.02] font-semibold tracking-[-0.035em] text-balance sm:text-6xl lg:text-[4.25rem]">
+                <Link href={`/article/${article.slug}`} className="outline-none focus-visible:underline">
+                  {words.map((word, wIdx) => (
+                    <span key={`${word}-${wIdx}`}>
+                      <span className="hero-word inline-block overflow-hidden pb-[0.1em] align-bottom -mb-[0.1em]">
+                        <span
+                          className={`inline-block ${wIdx === italicIdx ? "text-[#f2a877] italic" : ""}`}
+                          style={{ "--i": wIdx } as React.CSSProperties}
+                        >
+                          {word}
+                        </span>
+                      </span>
+                      {wIdx < words.length - 1 ? " " : ""}
+                    </span>
+                  ))}
+                </Link>
+              </h1>
+
+              {/* Excerpt */}
+              <p
+                className="hero-rise mt-5 line-clamp-3 max-w-xl text-[15px] leading-relaxed text-white/80 sm:text-lg"
+                style={{ "--d": "0.55s" } as React.CSSProperties}
+              >
+                {article.excerpt}
+              </p>
+
+              {/* Bottom CTA & Author byline */}
+              <div className="mt-8 flex flex-wrap items-center gap-6">
+                <Link
+                  href={`/article/${article.slug}`}
+                  className="group/cta inline-flex h-12 items-center gap-2 rounded-full bg-white pr-2 pl-5 text-sm font-semibold text-neutral-950 shadow-lg transition duration-500 ease-out-expo hover:bg-primary hover:text-primary-foreground"
+                >
+                  Read the story
+                  <span className="grid size-8 place-items-center rounded-full bg-neutral-950 text-white transition duration-500 ease-out-expo group-hover/cta:translate-x-0.5 group-hover/cta:bg-white group-hover/cta:text-primary">
+                    <ArrowRight className="size-4 transition-transform duration-500 ease-out-expo group-hover/cta:-rotate-45" />
+                  </span>
+                </Link>
+
+                <div className="flex items-center gap-3">
+                  <span className="grid size-9 place-items-center rounded-full border border-white/25 bg-white/10 text-xs font-semibold text-white backdrop-blur-md">
+                    {initials}
+                  </span>
+                  <div className="text-sm">
+                    {article.authorSlug ? (
+                      <Link
+                        href={`/author/${article.authorSlug}`}
+                        className="block font-medium text-white hover:underline"
+                      >
+                        {article.authorName}
+                      </Link>
+                    ) : (
+                      <span className="block font-medium text-white">{article.authorName}</span>
+                    )}
+                    {formattedDate && <span className="text-xs text-white/60">{formattedDate}</span>}
+                  </div>
                 </div>
               </div>
             </div>
+          </article>
+        );
+      })}
 
-            {/* Switcher list */}
-            <div className="mt-3 space-y-2">
-              {items.map((item, idx) => {
-                const isActive = idx === activeIndex;
-                return (
+      {/* Mobile Top Segment Indicators */}
+      {total > 1 && (
+        <div className="absolute inset-x-5 top-5 z-30 flex items-center gap-3 sm:inset-x-8 sm:top-7 lg:hidden">
+          <div className="flex flex-1 gap-1.5">
+            {articles.map((item, idx) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => goTo(idx)}
+                aria-label={`Show story ${idx + 1}: ${item.title}`}
+                aria-current={idx === activeIdx ? "true" : undefined}
+                className="group/seg relative h-6 flex-1 cursor-pointer"
+              >
+                <span className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 overflow-hidden rounded-full bg-white/25 transition-colors group-hover/seg:bg-white/40">
+                  {idx < activeIdx && <span className="absolute inset-0 bg-white" />}
+                  {idx === activeIdx && (
+                    <span
+                      key={`${activeIdx}-seg`}
+                      className="hero-progress absolute inset-0 bg-white"
+                      style={{
+                        "--hero-duration": "7000ms",
+                        animationPlayState: isAutoPlaying ? "running" : "paused",
+                      } as React.CSSProperties}
+                      onAnimationEnd={() => goTo(activeIdx + 1)}
+                    />
+                  )}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsPlaying(!isPlaying)}
+            aria-label={isPlaying ? "Pause slideshow" : "Play slideshow"}
+            className="grid size-8 place-items-center rounded-full bg-black/40 text-white backdrop-blur-md transition hover:bg-black/60"
+          >
+            {isPlaying ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
+          </button>
+        </div>
+      )}
+
+      {/* Desktop Bottom-Right Switcher Box */}
+      {total > 1 && (
+        <aside
+          className="absolute right-6 bottom-6 z-30 hidden w-[21.5rem] rounded-[1.6rem] border border-white/15 bg-black/35 p-2 shadow-2xl backdrop-blur-xl lg:block xl:right-8 xl:bottom-8"
+          aria-label="Featured story list"
+        >
+          {/* Header row */}
+          <div className="flex items-center justify-between gap-2 px-3 pt-1.5 pb-2.5">
+            <p className="text-[11px] font-semibold tracking-[0.2em] text-white/65 uppercase">
+              Featured
+            </p>
+            <div className="flex items-center gap-1.5">
+              <span className="font-mono text-xs text-white/70 tabular-nums">
+                {padZero(activeIdx + 1)} / {padZero(total)}
+              </span>
+              <button
+                type="button"
+                onClick={() => goTo(activeIdx - 1)}
+                aria-label="Previous story"
+                className="grid size-7 place-items-center rounded-full text-white/80 transition hover:bg-white/15 hover:text-white"
+              >
+                <ChevronLeft className="size-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => goTo(activeIdx + 1)}
+                aria-label="Next story"
+                className="grid size-7 place-items-center rounded-full text-white/80 transition hover:bg-white/15 hover:text-white"
+              >
+                <ChevronRight className="size-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsPlaying(!isPlaying)}
+                aria-label={isPlaying ? "Pause slideshow" : "Play slideshow"}
+                className="grid size-7 place-items-center rounded-full text-white/80 transition hover:bg-white/15 hover:text-white"
+              >
+                {isPlaying ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
+              </button>
+            </div>
+          </div>
+
+          {/* List of 4 cards */}
+          <ol className="space-y-1">
+            {articles.map((item, idx) => {
+              const isActive = idx === activeIdx;
+              return (
+                <li key={item.id}>
                   <button
-                    key={item.id}
                     type="button"
-                    onClick={() => setActiveIndex(idx)}
-                    className={`w-full flex items-center gap-3 p-2 rounded-xl text-left transition-all ${
-                      isActive
-                        ? "bg-white/15 border border-white/20 shadow-sm"
-                        : "opacity-60 hover:opacity-100 hover:bg-white/5"
+                    onClick={() => goTo(idx)}
+                    aria-current={isActive ? "true" : undefined}
+                    className={`group/item relative flex w-full cursor-pointer items-center gap-3 overflow-hidden rounded-2xl p-2 text-left transition-colors duration-500 ${
+                      isActive ? "bg-white/14" : "hover:bg-white/8"
                     }`}
                   >
-                    <div className="relative h-11 w-14 shrink-0 overflow-hidden rounded-lg bg-neutral-800">
+                    <span className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-white/10">
                       <Image
                         src={item.coverImage}
-                        alt={item.title}
+                        alt=""
                         fill
                         className="object-cover"
+                        sizes="56px"
                       />
-                    </div>
-                    <div className="overflow-hidden">
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-amber-400">
-                        {String(idx + 1).padStart(2, "0")} · {item.category}
-                      </div>
-                      <div className="text-xs font-semibold text-white truncate">
+                    </span>
+
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-xs font-semibold text-white">
                         {item.title}
-                      </div>
-                    </div>
+                      </span>
+                      <span className="mt-0.5 flex items-center gap-2 text-[11px] text-white/60">
+                        <span className="text-primary font-medium">{item.categoryName}</span>
+                        <span>·</span>
+                        <span>{item.readingTime || "5 min read"}</span>
+                      </span>
+                    </span>
+
+                    {/* Active progress indicator line */}
+                    {isActive && (
+                      <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20">
+                        <span
+                          key={`${activeIdx}-bar`}
+                          className="hero-progress block h-full bg-white"
+                          style={{
+                            "--hero-duration": "7000ms",
+                            animationPlayState: isAutoPlaying ? "running" : "paused",
+                          } as React.CSSProperties}
+                          onAnimationEnd={() => goTo(activeIdx + 1)}
+                        />
+                      </span>
+                    )}
                   </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
+                </li>
+              );
+            })}
+          </ol>
+        </aside>
+      )}
     </div>
   );
 }
