@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { FloatingAssistant } from "@/components/floating-assistant";
 
 export default function SiteLayout({
   children,
@@ -12,7 +11,6 @@ export default function SiteLayout({
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
-      <FloatingAssistant />
     </div>
   );
 }

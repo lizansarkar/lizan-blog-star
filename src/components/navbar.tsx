@@ -23,11 +23,6 @@ export function Navbar() {
       <div className="mx-auto flex h-[52px] max-w-7xl items-center justify-between rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/90 px-3 sm:px-4 shadow-sm backdrop-blur-md">
         {/* Brand identity: Black rounded icon with white L & orange dot + Brand name */}
         <Link href="/" className="flex items-center gap-2 pl-1 group">
-          <svg viewBox="0 0 32 32" className="size-7 shrink-0 text-foreground" aria-hidden="true">
-            <rect width="32" height="32" rx="9" className="fill-current" />
-            <path d="M8.4 7h5.4v12.2h8.8v5.4H8.4V7z" className="fill-background" />
-            <circle cx="25.6" cy="22.1" r="2.15" className="fill-[#c25e37]" />
-          </svg>
           <span className="font-sans text-[15px] font-bold tracking-tight text-neutral-900 dark:text-white">
             Lizan<span className="text-[#c25e37]">.</span>
           </span>
