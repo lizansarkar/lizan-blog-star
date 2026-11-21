@@ -21,6 +21,7 @@ import {
   Play,
   Pause,
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export interface ArticleReadingProps {
   article: {
@@ -222,7 +223,12 @@ export function ArticleReadingView({
       {/* Main 7XL Container */}
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-4 pb-20">
         {/* Header & Hero Area (Matches media_1795183089924_9d22ddfd.jpg) */}
-        <header className="mx-auto max-w-7xl pt-6 pb-2 text-center">
+        <motion.header
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="mx-auto max-w-7xl pt-6 pb-2 text-center"
+        >
           {/* Breadcrumb: Articles > Engineering */}
           <nav
             aria-label="Breadcrumb"
@@ -279,13 +285,13 @@ export function ArticleReadingView({
           </div>
 
           {/* Red-Circled Action Bar from User's First Image */}
-          <div className="w-full max-w-4xl mx-auto border-y border-neutral-200/80 dark:border-neutral-800 py-2.5 my-6 flex flex-wrap items-center justify-center sm:justify-between gap-3 text-xs text-neutral-600 dark:text-neutral-300">
+          <div className="w-full max-w-4xl mx-auto border-y border-neutral-200/80 dark:border-neutral-800 py-3 my-7 flex flex-wrap items-center justify-center sm:justify-between gap-3 text-xs sm:text-[13px] text-neutral-600 dark:text-neutral-300">
             {/* Left: Share + Social Icons */}
-            <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={copyUrl}
-                className="rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-3 py-1 flex items-center gap-1.5 text-xs text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition cursor-pointer"
+                className="rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-4 py-1.5 flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition cursor-pointer shadow-2xs"
               >
                 <Share2 className="size-3.5 text-neutral-500" />
                 <span>Share</span>
@@ -296,7 +302,7 @@ export function ArticleReadingView({
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Share on X"
-                className="size-7 rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-center text-xs font-bold text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition"
+                className="size-8 sm:size-8.5 rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-center text-xs sm:text-sm font-bold text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition shadow-2xs"
               >
                 𝕏
               </a>
@@ -306,7 +312,7 @@ export function ArticleReadingView({
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Share on LinkedIn"
-                className="size-7 rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-center text-xs font-bold text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition"
+                className="size-8 sm:size-8.5 rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-center text-xs sm:text-sm font-bold text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition shadow-2xs"
               >
                 in
               </a>
@@ -316,7 +322,7 @@ export function ArticleReadingView({
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Share on Facebook"
-                className="size-7 rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-center text-xs font-bold text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition"
+                className="size-8 sm:size-8.5 rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-center text-xs sm:text-sm font-bold text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition shadow-2xs"
               >
                 f
               </a>
@@ -324,7 +330,7 @@ export function ArticleReadingView({
               <a
                 href={`mailto:?subject=${encodeURIComponent(article.title)}&body=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`}
                 title="Share via Email"
-                className="size-7 rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-center text-xs text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition"
+                className="size-8 sm:size-8.5 rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-center text-xs sm:text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition shadow-2xs"
               >
                 ✉
               </a>
@@ -333,31 +339,31 @@ export function ArticleReadingView({
                 type="button"
                 onClick={copyUrl}
                 title="Copy Link"
-                className="size-7 rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-center text-xs text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition cursor-pointer"
+                className="size-8 sm:size-8.5 rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-center text-xs sm:text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition cursor-pointer shadow-2xs"
               >
-                <Link2 className="size-3.5 text-neutral-600 dark:text-neutral-300" />
+                <Link2 className="size-4 text-neutral-600 dark:text-neutral-300" />
               </button>
             </div>
 
             {/* Right: Listen · 1 min + Save */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <button
                 type="button"
                 onClick={() => setIsAudioOpen(!isAudioOpen)}
-                className={`rounded-full border px-3.5 py-1 flex items-center gap-1.5 text-xs font-medium transition cursor-pointer ${
+                className={`rounded-full border px-4 sm:px-4.5 py-1.5 flex items-center gap-2 text-xs sm:text-[13px] font-semibold transition cursor-pointer shadow-2xs ${
                   isAudioOpen
                     ? "border-[#c25e37] bg-[#c25e37]/10 text-[#c25e37]"
                     : "border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50"
                 }`}
               >
-                <Headphones className="size-3.5 text-[#c25e37]" />
+                <Headphones className="size-4 text-[#c25e37]" />
                 <span>Listen · {readingTime} min</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setSaved(!saved)}
-                className={`rounded-full border px-3.5 py-1 text-xs font-medium transition cursor-pointer ${
+                className={`rounded-full border px-4 sm:px-5 py-1.5 text-xs sm:text-[13px] font-semibold transition cursor-pointer shadow-2xs ${
                   saved
                     ? "border-[#c25e37] bg-[#c25e37] text-white"
                     : "border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50"
@@ -428,12 +434,17 @@ export function ArticleReadingView({
             A quiet morning · Journal entries from the local-first design
             sprint.
           </p>
-        </header>
+        </motion.header>
 
         {/* 2. Main 3-Column Reading Layout (Left Dock + Reading Body + Right TOC) */}
         <div className="mx-auto max-w-7xl mt-10 grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1fr)_16rem] gap-6 lg:gap-8 items-start relative">
           {/* Left Sticky Reaction Dock (Matches media_1795183132761_5bb9a4a7.png) */}
-          <aside className="hidden lg:flex sticky top-28 flex-col items-center gap-3 rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 py-3 px-2 shadow-sm backdrop-blur-md text-neutral-500">
+          <motion.aside
+            initial={{ opacity: 0, x: -14 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="hidden lg:flex sticky top-28 flex-col items-center gap-3 rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 py-3 px-2 shadow-sm backdrop-blur-md text-neutral-500"
+          >
             {/* Thumbs up + count */}
             <button
               type="button"
@@ -495,7 +506,7 @@ export function ArticleReadingView({
             >
               <ArrowUp className="size-4" />
             </button>
-          </aside>
+          </motion.aside>
 
           {/* Center Column: Reading Content Card + Interactive Cards */}
           <div className="w-full space-y-6">
@@ -567,7 +578,14 @@ export function ArticleReadingView({
               {/* Story Text matching media_1795183132761_5bb9a4a7.png exactly */}
               <div className="space-y-8 leading-relaxed text-neutral-700 dark:text-neutral-300 text-[15px] sm:text-base">
                 {/* Section 01 */}
-                <section id="beside-the-file" className="scroll-mt-24">
+                <motion.section
+                  id="beside-the-file"
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-20px" }}
+                  transition={{ duration: 0.4 }}
+                  className="scroll-mt-24"
+                >
                   <span className="text-xs font-bold text-[#c25e37] uppercase tracking-widest">
                     01
                   </span>
@@ -586,11 +604,15 @@ export function ArticleReadingView({
                       the work, written while the problem was still warm.
                     </p>
                   </div>
-                </section>
+                </motion.section>
 
                 {/* Section 02 */}
-                <section
+                <motion.section
                   id="short-on-purpose"
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-20px" }}
+                  transition={{ duration: 0.4 }}
                   className="scroll-mt-24 pt-6 border-t border-neutral-100 dark:border-neutral-800/80"
                 >
                   <span className="text-xs font-bold text-[#c25e37] uppercase tracking-widest">
@@ -610,11 +632,15 @@ export function ArticleReadingView({
                       task.
                     </p>
                   </div>
-                </section>
+                </motion.section>
 
                 {/* Section 03 */}
-                <section
+                <motion.section
                   id="what-survived"
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-20px" }}
+                  transition={{ duration: 0.4 }}
                   className="scroll-mt-24 pt-6 border-t border-neutral-100 dark:border-neutral-800/80"
                 >
                   <span className="text-xs font-bold text-[#c25e37] uppercase tracking-widest">
@@ -635,7 +661,7 @@ export function ArticleReadingView({
                       standing.
                     </p>
                   </div>
-                </section>
+                </motion.section>
               </div>
 
               {/* Tags row at bottom of content card */}
@@ -822,7 +848,12 @@ export function ArticleReadingView({
           </div>
 
           {/* Right Sticky Sidebar: ON THIS PAGE (Matches media_1795183132761_5bb9a4a7.png) */}
-          <aside className="hidden lg:block sticky top-28">
+          <motion.aside
+            initial={{ opacity: 0, x: 14 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="hidden lg:block sticky top-28"
+          >
             <div className="rounded-2xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-sm text-xs">
               {/* Header: ON THIS PAGE + 1 min left */}
               <div className="flex items-center justify-between text-[11px] font-semibold tracking-wider uppercase text-neutral-500 pb-1">
@@ -874,7 +905,7 @@ export function ArticleReadingView({
                 </a>
               </nav>
             </div>
-          </aside>
+          </motion.aside>
         </div>
 
         {/* 3. "Read next" 3-Card Grid Section (Max-w-7xl) */}
@@ -889,21 +920,30 @@ export function ArticleReadingView({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {relatedArticles.slice(0, 3).map((story) => (
-              <article
+            {relatedArticles.slice(0, 3).map((story, i) => (
+              <motion.article
                 key={story.id}
-                className="group flex flex-col justify-between rounded-2xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900/40 p-3 sm:p-3.5 hover:shadow-md transition-all duration-300"
+                initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.65, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{
+                  y: -7,
+                  scale: 1.015,
+                  transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                }}
+                className="group flex flex-col justify-between rounded-2xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900/40 p-3.5 sm:p-4 hover:shadow-xl transition-shadow duration-500"
               >
                 <div>
                   <Link
                     href={`/article/${story.slug}`}
-                    className="relative block aspect-[16/10] w-full overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-800 mb-3"
+                    className="relative block aspect-[16/10] w-full overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-800 mb-3.5"
                   >
                     <Image
                       src={story.coverImage}
                       alt={story.title}
                       fill
-                      className="object-cover transition duration-500 ease-out group-hover:scale-[1.04]"
+                      className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
                       sizes="(min-width: 1024px) 33vw, 100vw"
                     />
                   </Link>
@@ -916,7 +956,7 @@ export function ArticleReadingView({
                     <span>{story.authorName}</span>
                   </div>
 
-                  <h3 className="mt-1.5 text-[15px] font-bold leading-snug tracking-tight text-neutral-950 dark:text-white transition-colors group-hover:text-[#c25e37] line-clamp-2">
+                  <h3 className="mt-2 text-[15px] sm:text-base font-bold leading-snug tracking-tight text-neutral-950 dark:text-white transition-colors duration-300 group-hover:text-[#c25e37] line-clamp-2">
                     <Link href={`/article/${story.slug}`}>{story.title}</Link>
                   </h3>
 
@@ -924,7 +964,7 @@ export function ArticleReadingView({
                     {story.excerpt}
                   </p>
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
         </section>

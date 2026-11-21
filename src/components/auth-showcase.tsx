@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Music2,
   Columns2,
@@ -11,6 +11,7 @@ import {
   Bookmark,
   ShieldCheck,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SlideData {
   title: string;
@@ -38,13 +39,23 @@ export function AuthShowcase() {
   return (
     <div className="hidden lg:flex flex-col justify-between items-center border-l border-neutral-100 dark:border-neutral-800/80 p-10 sm:p-12 bg-neutral-50/50 dark:bg-neutral-950/40 relative select-none">
       {/* Top Header */}
-      <div className="text-center max-w-xs transition-all duration-300">
-        <h2 className="text-2xl font-bold tracking-tight text-neutral-950 dark:text-white">
-          {slides[activeSlide].title}
-        </h2>
-        <p className="mt-2 text-xs sm:text-[13px] text-neutral-500 dark:text-neutral-400 leading-relaxed">
-          {slides[activeSlide].subtitle}
-        </p>
+      <div className="text-center max-w-xs min-h-[72px] flex flex-col justify-center">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeSlide}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.3 }}
+          >
+            <h2 className="text-2xl font-bold tracking-tight text-neutral-950 dark:text-white">
+              {slides[activeSlide].title}
+            </h2>
+            <p className="mt-2 text-xs sm:text-[13px] text-neutral-500 dark:text-neutral-400 leading-relaxed">
+              {slides[activeSlide].subtitle}
+            </p>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Center Graphic: The Constellation Network */}

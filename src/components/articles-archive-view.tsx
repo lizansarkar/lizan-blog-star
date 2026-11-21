@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Search, X, Loader2, ArrowRight, ArrowUpRight } from "lucide-react";
 import { format } from "date-fns";
+import { motion, AnimatePresence } from "framer-motion";
 
 export interface ArchiveStory {
   id: string;
@@ -46,8 +47,12 @@ export function ArticlesArchiveView({
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
   const [isDebouncing, setIsDebouncing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [selectedLength, setSelectedLength] = useState<"any" | "short" | "long">("any");
-  const [selectedSort, setSelectedSort] = useState<"newest" | "popular">("newest");
+  const [selectedLength, setSelectedLength] = useState<
+    "any" | "short" | "long"
+  >("any");
+  const [selectedSort, setSelectedSort] = useState<"newest" | "popular">(
+    "newest",
+  );
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -65,8 +70,13 @@ export function ArticlesArchiveView({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const active = document.activeElement;
-      const isInput = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA");
-      if ((e.key === "/" || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k")) && !isInput) {
+      const isInput =
+        active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA");
+      if (
+        (e.key === "/" ||
+          ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k")) &&
+        !isInput
+      ) {
         e.preventDefault();
         inputRef.current?.focus();
         inputRef.current?.select();
@@ -106,7 +116,7 @@ export function ArticlesArchiveView({
     // Filter by category
     if (selectedCategory !== "all") {
       result = result.filter(
-        (s) => s.category.toLowerCase() === selectedCategory.toLowerCase()
+        (s) => s.category.toLowerCase() === selectedCategory.toLowerCase(),
       );
     }
 
@@ -119,7 +129,7 @@ export function ArticlesArchiveView({
           s.excerpt.toLowerCase().includes(q) ||
           s.category.toLowerCase().includes(q) ||
           s.authorName.toLowerCase().includes(q) ||
-          s.tags?.some((t) => t.toLowerCase().includes(q))
+          s.tags?.some((t) => t.toLowerCase().includes(q)),
       );
     }
 
@@ -135,7 +145,8 @@ export function ArticlesArchiveView({
       result.sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
     } else if (selectedSort === "newest") {
       result.sort(
-        (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+        (a, b) =>
+          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
       );
     }
 
@@ -164,10 +175,14 @@ export function ArticlesArchiveView({
           SEARCH
         </p>
         <h1 className="mt-2 font-sans text-4xl sm:text-5xl font-bold tracking-tight text-neutral-950 dark:text-white">
-          Find your next <span className="font-serif italic font-normal text-[#c25e37]">good read</span>
+          Find your next{" "}
+          <span className="font-serif italic font-normal text-[#c25e37]">
+            good read
+          </span>
         </h1>
         <p className="mt-2.5 max-w-xl text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">
-          Results update as you type. Search titles, writers, sections, tags, and key points. Typos are fine.
+          Results update as you type. Search titles, writers, sections, tags,
+          and key points. Typos are fine.
         </p>
       </div>
 
@@ -190,21 +205,21 @@ export function ArticlesArchiveView({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search stories, writers, topics..."
-            className="h-12 w-full rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 pr-24 pl-11 text-sm text-neutral-900 dark:text-white shadow-xs placeholder:text-neutral-400 focus:border-[#c25e37] focus:outline-none focus:ring-1 focus:ring-[#c25e37]"
+            className="h-13 w-full rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 pr-28 pl-12 text-sm sm:text-base text-neutral-900 dark:text-white shadow-xs placeholder:text-neutral-400 focus:border-[#c25e37] focus:outline-none focus:ring-1 focus:ring-[#c25e37] transition"
           />
 
-          <div className="absolute right-2 flex items-center gap-1.5">
+          <div className="absolute right-2.5 flex items-center gap-1.5">
             {query ? (
               <button
                 type="button"
                 onClick={() => setQuery("")}
                 aria-label="Clear search"
-                className="grid size-7 place-items-center rounded-full text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200"
+                className="grid size-8 place-items-center rounded-full text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 cursor-pointer"
               >
-                <X className="size-3.5" />
+                <X className="size-4" />
               </button>
             ) : (
-              <kbd className="hidden h-6 items-center rounded border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800 px-1.5 font-mono text-[10px] text-neutral-400 sm:inline-flex">
+              <kbd className="hidden h-6 items-center rounded border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800 px-2 font-mono text-[10px] text-neutral-400 sm:inline-flex">
                 /
               </kbd>
             )}
@@ -213,18 +228,18 @@ export function ArticlesArchiveView({
               type="button"
               onClick={() => setDebouncedQuery(query)}
               aria-label="Search"
-              className="grid size-8 place-items-center rounded-full bg-neutral-950 text-white hover:bg-neutral-800 transition"
+              className="grid size-9 sm:size-10 place-items-center rounded-full bg-neutral-950 text-white hover:bg-neutral-800 transition shadow-xs cursor-pointer"
             >
-              <ArrowRight className="size-3.5" />
+              <ArrowRight className="size-4" />
             </button>
           </div>
         </div>
       </div>
 
       {/* 3. Popular Tag Pills */}
-      <div className="mt-3.5 flex flex-wrap items-center gap-1.5 text-xs">
-        <span className="flex items-center gap-0.5 text-[11px] font-semibold text-neutral-400 tracking-wider mr-1">
-          <ArrowUpRight className="size-3 text-neutral-400 stroke-[2.5]" />
+      <div className="mt-4 flex flex-wrap items-center gap-2 text-xs sm:text-[13px]">
+        <span className="flex items-center gap-0.5 text-xs font-semibold text-neutral-400 tracking-wider mr-1">
+          <ArrowUpRight className="size-3.5 text-neutral-400 stroke-[2.5]" />
           Popular
         </span>
         {POPULAR_TAGS.map((tag) => (
@@ -235,9 +250,9 @@ export function ArticlesArchiveView({
               setQuery(tag);
               setDebouncedQuery(tag);
             }}
-            className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-xs transition ${
+            className={`cursor-pointer rounded-full border px-3 py-1 text-xs sm:text-[13px] transition ${
               query.toLowerCase() === tag.toLowerCase()
-                ? "border-[#c25e37] bg-[#c25e37] text-white font-semibold"
+                ? "border-[#c25e37] bg-[#c25e37] text-white font-semibold shadow-xs"
                 : "border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 hover:border-neutral-300 hover:text-neutral-900 dark:hover:text-white"
             }`}
           >
@@ -247,9 +262,9 @@ export function ArticlesArchiveView({
       </div>
 
       {/* 4. Filter Toolbar (Categories & Length & Sort) */}
-      <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="mt-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
           {categories.map((cat) => {
             const isActive = selectedCategory.toLowerCase() === cat.id;
             return (
@@ -257,7 +272,7 @@ export function ArticlesArchiveView({
                 key={cat.id}
                 type="button"
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`cursor-pointer shrink-0 rounded-full px-3.5 py-1 text-xs transition ${
+                className={`cursor-pointer shrink-0 rounded-full px-4 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm transition ${
                   isActive
                     ? "bg-neutral-950 text-white font-semibold shadow-xs dark:bg-white dark:text-neutral-950"
                     : "border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800"
@@ -270,15 +285,15 @@ export function ArticlesArchiveView({
         </div>
 
         {/* Right Filters: Length & Sort */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0">
           {/* Length Filter Pills */}
-          <div className="flex items-center rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-0.5 text-xs">
+          <div className="flex items-center rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-1 text-xs sm:text-[13px]">
             <button
               type="button"
               onClick={() => setSelectedLength("any")}
-              className={`rounded-full px-2.5 py-0.5 font-medium transition ${
+              className={`rounded-full px-3 sm:px-3.5 py-1 font-medium transition cursor-pointer ${
                 selectedLength === "any"
-                  ? "bg-neutral-950 text-white font-semibold dark:bg-white dark:text-neutral-950"
+                  ? "bg-neutral-950 text-white font-semibold dark:bg-white dark:text-neutral-950 shadow-2xs"
                   : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
               }`}
             >
@@ -287,9 +302,9 @@ export function ArticlesArchiveView({
             <button
               type="button"
               onClick={() => setSelectedLength("short")}
-              className={`rounded-full px-2.5 py-0.5 font-medium transition ${
+              className={`rounded-full px-3 sm:px-3.5 py-1 font-medium transition cursor-pointer ${
                 selectedLength === "short"
-                  ? "bg-neutral-950 text-white font-semibold dark:bg-white dark:text-neutral-950"
+                  ? "bg-neutral-950 text-white font-semibold dark:bg-white dark:text-neutral-950 shadow-2xs"
                   : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
               }`}
             >
@@ -298,9 +313,9 @@ export function ArticlesArchiveView({
             <button
               type="button"
               onClick={() => setSelectedLength("long")}
-              className={`rounded-full px-2.5 py-0.5 font-medium transition ${
+              className={`rounded-full px-3 sm:px-3.5 py-1 font-medium transition cursor-pointer ${
                 selectedLength === "long"
-                  ? "bg-neutral-950 text-white font-semibold dark:bg-white dark:text-neutral-950"
+                  ? "bg-neutral-950 text-white font-semibold dark:bg-white dark:text-neutral-950 shadow-2xs"
                   : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
               }`}
             >
@@ -309,13 +324,13 @@ export function ArticlesArchiveView({
           </div>
 
           {/* Sort Filter */}
-          <div className="flex items-center rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-0.5 text-xs">
+          <div className="flex items-center rounded-full border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-1 text-xs sm:text-[13px]">
             <button
               type="button"
               onClick={() => setSelectedSort("newest")}
-              className={`rounded-full px-3 py-0.5 font-medium transition ${
+              className={`rounded-full px-3.5 sm:px-4 py-1 font-medium transition cursor-pointer ${
                 selectedSort === "newest"
-                  ? "bg-neutral-950 text-white font-semibold dark:bg-white dark:text-neutral-950"
+                  ? "bg-neutral-950 text-white font-semibold dark:bg-white dark:text-neutral-950 shadow-2xs"
                   : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
               }`}
             >
@@ -324,9 +339,9 @@ export function ArticlesArchiveView({
             <button
               type="button"
               onClick={() => setSelectedSort("popular")}
-              className={`rounded-full px-3 py-0.5 font-medium transition ${
+              className={`rounded-full px-3.5 sm:px-4 py-1 font-medium transition cursor-pointer ${
                 selectedSort === "popular"
-                  ? "bg-neutral-950 text-white font-semibold dark:bg-white dark:text-neutral-950"
+                  ? "bg-neutral-950 text-white font-semibold dark:bg-white dark:text-neutral-950 shadow-2xs"
                   : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
               }`}
             >
@@ -346,7 +361,11 @@ export function ArticlesArchiveView({
           {debouncedQuery.trim() && (
             <span>
               {" "}
-              matching &ldquo;<span className="text-[#c25e37] font-medium">{debouncedQuery}</span>&rdquo;
+              matching &ldquo;
+              <span className="text-[#c25e37] font-medium">
+                {debouncedQuery}
+              </span>
+              &rdquo;
             </span>
           )}
         </p>
@@ -364,67 +383,84 @@ export function ArticlesArchiveView({
 
       {/* 6. Story Cards Grid (3 Columns matching media_1795178742346_26d89610.jpg) */}
       {filteredStories.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
-          {filteredStories.map((story) => {
-            const formattedDate = story.publishedAt
-              ? format(new Date(story.publishedAt), "d MMM yyyy")
-              : "";
+        <motion.div
+          layout
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7"
+        >
+          <AnimatePresence mode="popLayout">
+            {filteredStories.map((story, index) => {
+              const formattedDate = story.publishedAt
+                ? format(new Date(story.publishedAt), "d MMM yyyy")
+                : "";
 
-            return (
-              <article
-                key={story.id}
-                className="group flex flex-col justify-between rounded-2xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900/40 p-3 sm:p-3.5 hover:shadow-md transition-all duration-300"
-              >
-                <div>
-                  {/* Aspect Cover Image */}
-                  <Link
-                    href={`/article/${story.slug}`}
-                    className="relative block aspect-[16/10] w-full overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-800 mb-3.5"
-                  >
-                    <Image
-                      src={story.coverImage}
-                      alt={story.title}
-                      fill
-                      className="object-cover transition duration-500 ease-out group-hover:scale-[1.04]"
-                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    />
-                  </Link>
-
-                  {/* Meta: Category · Author · Reading Time · Date */}
-                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
-                    <span className="font-semibold text-[#c25e37] uppercase tracking-wider text-[10.5px]">
-                      {story.category}
-                    </span>
-                    <span>·</span>
-                    <span className="font-medium text-neutral-600 dark:text-neutral-300">
-                      {story.authorName}
-                    </span>
-                    <span>·</span>
-                    <span>{story.readingTime} min</span>
-                    {formattedDate && (
-                      <>
-                        <span>·</span>
-                        <span>{formattedDate}</span>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Title */}
-                  <h2 className="mt-1.5 text-[15px] sm:text-base font-bold leading-snug tracking-tight text-neutral-950 dark:text-white transition-colors group-hover:text-[#c25e37] line-clamp-2">
-                    <Link href={`/article/${story.slug}`}>
-                      {story.title}
+              return (
+                <motion.article
+                  layout
+                  initial={{ opacity: 0, y: 24, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, scale: 0.96, filter: "blur(4px)" }}
+                  transition={{
+                    duration: 0.65,
+                    delay: Math.min(index * 0.05, 0.35),
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  whileHover={{
+                    y: -7,
+                    scale: 1.015,
+                    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                  }}
+                  key={story.id}
+                  className="group flex flex-col justify-between rounded-2xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900/40 p-3.5 sm:p-4 hover:shadow-xl transition-shadow duration-500"
+                >
+                  <div>
+                    {/* Aspect Cover Image */}
+                    <Link
+                      href={`/article/${story.slug}`}
+                      className="relative block aspect-[16/10] w-full overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-800 mb-3.5"
+                    >
+                      <Image
+                        src={story.coverImage}
+                        alt={story.title}
+                        fill
+                        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      />
                     </Link>
-                  </h2>
 
-                  {/* Excerpt */}
-                  <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-                    {story.excerpt}
-                  </p>
-                </div>
-              </article>
-            );
-          })}
-        </div>
+                    {/* Meta: Category · Author · Reading Time · Date */}
+                    <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+                      <span className="font-semibold text-[#c25e37] uppercase tracking-wider text-[10.5px]">
+                        {story.category}
+                      </span>
+                      <span>·</span>
+                      <span className="font-medium text-neutral-600 dark:text-neutral-300">
+                        {story.authorName}
+                      </span>
+                      <span>·</span>
+                      <span>{story.readingTime} min</span>
+                      {formattedDate && (
+                        <>
+                          <span>·</span>
+                          <span>{formattedDate}</span>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Title */}
+                    <h2 className="mt-2 text-[15px] sm:text-base font-bold leading-snug tracking-tight text-neutral-950 dark:text-white transition-colors duration-300 group-hover:text-[#c25e37] line-clamp-2">
+                      <Link href={`/article/${story.slug}`}>{story.title}</Link>
+                    </h2>
+
+                    {/* Excerpt */}
+                    <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+                      {story.excerpt}
+                    </p>
+                  </div>
+                </motion.article>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
       ) : (
         /* Empty State */
         <div className="rounded-3xl border border-dashed border-neutral-200 dark:border-neutral-800 p-12 text-center">

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Search, ArrowUpRight, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
+import { motion, AnimatePresence } from "framer-motion";
 
 export interface BrowserStory {
   id: string;
@@ -236,42 +237,47 @@ export function ArticlesBrowser({
           {featuredStory ? (
             <div className="grid gap-10">
               {/* Top Featured Wide Card */}
-              <article className="grid gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-center">
+              <motion.article
+                initial={{ opacity: 0, y: 24, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+                className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-center"
+              >
                 <Link
                   href={`/article/${featuredStory.slug}`}
-                  className="group relative block aspect-4/3 overflow-hidden rounded-3xl bg-muted"
+                  className="group relative block aspect-4/3 overflow-hidden rounded-3xl bg-muted shadow-xs hover:shadow-xl transition-shadow duration-500"
                 >
                   <Image
                     src={featuredStory.coverImage}
                     alt={featuredStory.title}
                     fill
                     priority
-                    className="object-cover transition duration-[1.2s] ease-out-expo group-hover:scale-[1.06]"
+                    className="object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
                     sizes="(min-width: 1024px) 40vw, 100vw"
                   />
                 </Link>
 
                 <div className="lg:pl-2">
-                  <p className="text-xs font-medium text-primary uppercase tracking-wider">
+                  <p className="text-xs font-semibold text-primary uppercase tracking-wider">
                     Featured
                   </p>
-                  <h2 className="mt-2 text-3xl leading-tight font-bold tracking-tight text-foreground transition-colors hover:text-primary">
+                  <h2 className="mt-2 text-3xl sm:text-4xl leading-tight font-bold tracking-tight text-foreground transition-colors duration-300 hover:text-primary">
                     <Link href={`/article/${featuredStory.slug}`}>
                       {featuredStory.title}
                     </Link>
                   </h2>
-                  <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                  <p className="mt-3.5 line-clamp-3 text-sm sm:text-base leading-relaxed text-muted-foreground">
                     {featuredStory.excerpt}
                   </p>
-                  <div className="mt-4 flex items-center justify-between gap-3">
+                  <div className="mt-5 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-muted text-sm font-semibold text-foreground">
+                      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-muted text-sm font-semibold text-foreground">
                         {featuredStory.authorName.charAt(0)}
                       </span>
                       <div className="min-w-0">
                         <Link
                           href={`/author/${featuredStory.authorSlug}`}
-                          className="block truncate text-sm font-medium text-foreground underline-offset-4 hover:text-primary hover:underline"
+                          className="block truncate text-sm font-semibold text-foreground underline-offset-4 hover:text-primary hover:underline"
                         >
                           {featuredStory.authorName}
                         </Link>
@@ -285,47 +291,64 @@ export function ArticlesBrowser({
                     <Link
                       href={`/article/${featuredStory.slug}`}
                       aria-label={`Read ${featuredStory.title}`}
-                      className="text-muted-foreground hover:text-primary transition-colors"
+                      className="text-muted-foreground hover:text-primary transition-colors duration-300"
                     >
-                      <ArrowUpRight className="size-4" />
+                      <ArrowUpRight className="size-5" />
                     </Link>
                   </div>
                 </div>
-              </article>
+              </motion.article>
 
               {/* Remaining Stories Grid (2 Columns) */}
               {remainingStories.length > 0 && (
                 <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2">
-                  {remainingStories.map((story) => (
-                    <article key={story.id} className="group">
-                      <Link
-                        href={`/article/${story.slug}`}
-                        className="relative block aspect-16/10 overflow-hidden rounded-3xl bg-muted"
-                      >
-                        <Image
-                          src={story.coverImage}
-                          alt={story.title}
-                          fill
-                          className="object-cover transition duration-[1.2s] ease-out-expo group-hover:scale-[1.06]"
-                          sizes="(min-width: 1024px) 30vw, 100vw"
-                        />
-                      </Link>
-
-                      <p className="mt-4 text-xs font-medium text-primary uppercase tracking-wider">
-                        {story.category}
-                      </p>
-
-                      <h2 className="mt-1 text-xl leading-snug font-bold tracking-tight text-foreground transition-colors group-hover:text-primary">
-                        <Link href={`/article/${story.slug}`}>
-                          {story.title}
+                  {remainingStories.map((story, idx) => (
+                    <motion.article
+                      key={story.id}
+                      initial={{ opacity: 0, y: 24, filter: "blur(4px)" }}
+                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                      transition={{
+                        duration: 0.65,
+                        delay: Math.min(idx * 0.05, 0.35),
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      whileHover={{
+                        y: -7,
+                        scale: 1.015,
+                        transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                      }}
+                      className="group flex flex-col justify-between"
+                    >
+                      <div>
+                        <Link
+                          href={`/article/${story.slug}`}
+                          className="relative block aspect-16/10 overflow-hidden rounded-3xl bg-muted shadow-xs group-hover:shadow-xl transition-shadow duration-500"
+                        >
+                          <Image
+                            src={story.coverImage}
+                            alt={story.title}
+                            fill
+                            className="object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
+                            sizes="(min-width: 1024px) 30vw, 100vw"
+                          />
                         </Link>
-                      </h2>
 
-                      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                        {story.excerpt}
-                      </p>
+                        <p className="mt-4 text-xs font-semibold text-primary uppercase tracking-wider">
+                          {story.category}
+                        </p>
 
-                      <div className="mt-4 flex items-center justify-between gap-3">
+                        <h2 className="mt-1 text-xl sm:text-[22px] leading-snug font-bold tracking-tight text-foreground transition-colors duration-300 group-hover:text-primary">
+                          <Link href={`/article/${story.slug}`}>
+                            {story.title}
+                          </Link>
+                        </h2>
+
+                        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                          {story.excerpt}
+                        </p>
+                      </div>
+
+                      <div className="mt-4 flex items-center justify-between gap-3 border-t border-border/40 pt-3">
                         <div className="flex items-center gap-3">
                           <span className="grid size-9 shrink-0 place-items-center rounded-full bg-muted text-sm font-semibold text-foreground">
                             {story.authorName.charAt(0)}
@@ -348,12 +371,12 @@ export function ArticlesBrowser({
                         <Link
                           href={`/article/${story.slug}`}
                           aria-label={`Read ${story.title}`}
-                          className="text-muted-foreground hover:text-primary transition-colors"
+                          className="text-muted-foreground hover:text-primary transition-colors duration-300"
                         >
-                          <ArrowUpRight className="size-4" />
+                          <ArrowUpRight className="size-4.5" />
                         </Link>
                       </div>
-                    </article>
+                    </motion.article>
                   ))}
                 </div>
               )}

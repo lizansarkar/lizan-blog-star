@@ -232,28 +232,28 @@ export function HomeHero({ articles }: HomeHeroProps) {
               <div className="mt-8 flex flex-wrap items-center gap-6">
                 <Link
                   href={`/article/${article.slug}`}
-                  className="group/cta inline-flex h-12 items-center gap-2 rounded-full bg-white pr-2 pl-5 text-sm font-semibold text-neutral-950 shadow-lg transition duration-500 ease-out-expo hover:bg-primary hover:text-primary-foreground"
+                  className="group/cta inline-flex h-13 sm:h-14 items-center gap-3 rounded-full bg-white pr-2.5 pl-6 sm:pl-7 text-sm sm:text-base font-semibold text-neutral-950 shadow-lg transition-all duration-500 ease-out-expo hover:bg-primary hover:text-primary-foreground hover:scale-[1.02] cursor-pointer"
                 >
                   Read the story
-                  <span className="grid size-8 place-items-center rounded-full bg-neutral-950 text-white transition duration-500 ease-out-expo group-hover/cta:translate-x-0.5 group-hover/cta:bg-white group-hover/cta:text-primary">
-                    <ArrowRight className="size-4 transition-transform duration-500 ease-out-expo group-hover/cta:-rotate-45" />
+                  <span className="grid size-9 sm:size-10 place-items-center rounded-full bg-neutral-950 text-white transition duration-500 ease-out-expo group-hover/cta:translate-x-0.5 group-hover/cta:bg-white group-hover/cta:text-primary">
+                    <ArrowRight className="size-4 sm:size-5 transition-transform duration-500 ease-out-expo group-hover/cta:-rotate-45" />
                   </span>
                 </Link>
 
                 <div className="flex items-center gap-3">
-                  <span className="grid size-9 place-items-center rounded-full border border-white/25 bg-white/10 text-xs font-semibold text-white backdrop-blur-md">
+                  <span className="grid size-10 sm:size-11 place-items-center rounded-full border border-white/25 bg-white/10 text-xs sm:text-sm font-semibold text-white backdrop-blur-md">
                     {initials}
                   </span>
                   <div className="text-sm">
                     {article.authorSlug ? (
                       <Link
                         href={`/author/${article.authorSlug}`}
-                        className="block font-medium text-white hover:underline"
+                        className="block font-medium text-white hover:underline text-sm sm:text-[15px]"
                       >
                         {article.authorName}
                       </Link>
                     ) : (
-                      <span className="block font-medium text-white">{article.authorName}</span>
+                      <span className="block font-medium text-white text-sm sm:text-[15px]">{article.authorName}</span>
                     )}
                     {formattedDate && <span className="text-xs text-white/60">{formattedDate}</span>}
                   </div>
