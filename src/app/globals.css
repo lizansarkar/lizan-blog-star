@@ -679,13 +679,20 @@ input:disabled {
    ========================================================================= */
 
 /* View Transitions API (Modern Chromium, Edge, Safari 18+) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 1.35s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  mix-blend-mode: normal;
+}
+
 ::view-transition-old(root) {
   animation: none;
   z-index: 1;
 }
 
 ::view-transition-new(root) {
-  animation: theme-curtain-swipe 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-name: theme-curtain-swipe;
   z-index: 999999;
 }
 
@@ -705,14 +712,17 @@ input:disabled {
   z-index: 999999;
   pointer-events: none;
   transform: translateX(100%);
-  animation: curtain-sweep 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: curtain-sweep 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes curtain-sweep {
   0% {
     transform: translateX(100%);
   }
-  50% {
+  48% {
+    transform: translateX(0%);
+  }
+  52% {
     transform: translateX(0%);
   }
   100% {
