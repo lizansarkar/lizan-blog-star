@@ -25,7 +25,9 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-2.5 pl-0.5 group">
           <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-[10px] bg-neutral-950 text-white font-bold text-[15px] sm:text-[16px] tracking-tight shadow-xs transition-transform duration-300 group-hover:scale-105">
             <span>L</span>
-            <span className="text-[#c25e37] text-[18px] leading-none mb-0.5 font-bold">.</span>
+            <span className="text-[#c25e37] text-[18px] leading-none mb-0.5 font-bold">
+              .
+            </span>
           </div>
           <span className="font-sans text-lg sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
             Lizan<span className="text-[#c25e37]">.</span>
@@ -38,21 +40,19 @@ export function Navbar() {
             const isActive =
               link.href === "/"
                 ? pathname === "/"
-                : pathname === link.href || pathname.startsWith(link.href + "/");
+                : pathname === link.href ||
+                  pathname.startsWith(link.href + "/");
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`transition-colors duration-200 relative py-1 ${
+                className={`transition-colors duration-200 py-1 ${
                   isActive
                     ? "text-[#c25e37] font-semibold"
                     : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                 }`}
               >
                 {link.label}
-                {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#c25e37] rounded-full" />
-                )}
               </Link>
             );
           })}

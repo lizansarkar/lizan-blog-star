@@ -673,3 +673,49 @@ input:disabled {
   outline: 2px solid color-mix(in oklab, var(--primary) 60%, transparent);
   outline-offset: -2px;
 }
+
+/* =========================================================================
+   Theme Transition: Right-to-Left Curtain Slide
+   ========================================================================= */
+
+/* View Transitions API (Modern Chromium, Edge, Safari 18+) */
+::view-transition-old(root) {
+  animation: none;
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  animation: theme-curtain-swipe 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 999999;
+}
+
+@keyframes theme-curtain-swipe {
+  0% {
+    clip-path: inset(0 0 0 100%);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Fallback Animated Curtain Element for browsers without View Transitions */
+.theme-curtain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  pointer-events: none;
+  transform: translateX(100%);
+  animation: curtain-sweep 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes curtain-sweep {
+  0% {
+    transform: translateX(100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
